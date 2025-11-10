@@ -1,0 +1,29 @@
+{
+  "last_updated": "2024-01-02T06:00:00Z",
+  "github": {
+    "stars": 152,
+    "forks": 26,
+    "contributors": 12,
+    "open_issues": 7,
+    "open_prs": 4,
+    "total_commits": 340
+  },
+  "discourse": {
+    "total_users": 47,
+    "total_posts": 128,
+    "active_users_30d": 15
+  },
+  "slack": {
+    "total_members": 80,
+    "active_members_30d": 22
+  },
+  "pypi": {
+    "total_downloads": 1520,
+    "downloads_30d": 450
+  },
+  "growth_metrics": {
+    "stars_growth_30d": 12,
+    "contributors_growth_30d": 2,
+    "downloads_growth_30d": 120
+  }
+}

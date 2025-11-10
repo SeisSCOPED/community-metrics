@@ -1,0 +1,4 @@
+date,github_stars,github_forks,github_contributors,github_issues_open,github_prs_open,discourse_users,discourse_posts,slack_members,pypi_downloads
+2024-01-01,150,25,12,8,3,45,125,78,1500
+2024-01-02,152,26,12,7,4,47,128,80,1520
+# This file will be automatically updated by the metrics collection script
