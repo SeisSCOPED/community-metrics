@@ -52,9 +52,19 @@ jobs:
         git diff --staged --quiet || git commit -m "Update community metrics - $(date)"
         git push
 
+    - name: Prepare GitHub Pages deployment
+      run: |
+        mkdir -p _site
+        cp dashboard/index.html _site/
+        cp dashboard/scoped_logo.jpg _site/ 2>/dev/null || echo "Logo not found, skipping"
+        # Copy metrics data for dashboard
+        mkdir -p _site/metrics
+        cp metrics/latest.json _site/metrics/ 2>/dev/null || echo "No metrics data found"
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dashboard
+        publish_dir: ./_site
         publish_branch: gh-pages
+        force_orphan: true
