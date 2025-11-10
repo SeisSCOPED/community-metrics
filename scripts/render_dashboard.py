@@ -392,8 +392,8 @@ class DashboardRenderer:
             f.write(html_content)
         
         print(f"Dashboard rendered successfully to {self.output_file}")
-        print(f"GitHub Stars: {metrics['github']['stars']}")
-        print(f"Total Contributors: {metrics['github']['contributors']}")
+        print(f"Total GitHub Stars: {metrics['github'].get('total_stars', 0)}")
+        print(f"Organization Members: {metrics['github'].get('organization_members', 0)}")
         
         return str(self.output_file)
 

@@ -1,5 +1,2 @@
 date,total_repositories,total_stars,total_forks,total_watchers,organization_members,unique_contributors,total_open_issues,total_open_prs,active_repos_30d,scholar_authors,scholar_citations,scholar_publications,scholar_h_index,slack_members,pypi_downloads
-2024-01-01,25,1250,320,180,15,45,85,12,8,3,850,120,18,78,1500
-2024-01-02,26,1275,325,185,16,47,82,15,9,3,865,122,19,80,1520
-# This file will be automatically updated by the metrics collection script
-# New structure includes GitHub organization-wide metrics and Google Scholar academic impact
+2025-11-10,0,0,0,0,0,0,0,0,0,1,3280,20,23,0,824

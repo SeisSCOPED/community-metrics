@@ -610,10 +610,11 @@ class MetricsCollector:
         self.save_to_csv(all_metrics)
         self.save_to_json(all_metrics)
         
-        print(f"Metrics collected successfully!")
-        print(f"GitHub Stars: {github_metrics['stars']}")
-        print(f"Contributors: {github_metrics['contributors']}")
-        print(f"PyPI Downloads (30d): {pypi_metrics['downloads_30d']}")
+        print("Metrics collected successfully!")
+        print(f"Total GitHub Stars: {github_metrics.get('total_stars', 0)}")
+        print(f"Organization Members: {github_metrics.get('organization_members', 0)}")
+        print(f"Google Scholar Citations: {google_scholar_metrics.get('total_citations', 0)}")
+        print(f"PyPI Downloads (30d): {pypi_metrics.get('downloads_30d', 0)}")
         
         return all_metrics
 

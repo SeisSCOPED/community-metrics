@@ -1,23 +1,24 @@
 {
-  "last_updated": "2024-11-10T06:00:00Z",
+  "last_updated": "2025-11-10T21:45:58.213516Z",
   "github": {
     "organization_name": "SeisSCOPED",
-    "total_repositories": 26,
-    "total_stars": 1275,
-    "total_forks": 325,
-    "total_watchers": 185,
-    "organization_members": 16,
-    "unique_contributors": 47,
-    "total_open_issues": 82,
-    "total_open_prs": 15,
-    "active_repos_30d": 9,
-    "primary_languages": {
-      "Python": 12,
-      "Jupyter Notebook": 6,
-      "MATLAB": 4,
-      "JavaScript": 2,
-      "R": 2
-    }
+    "organization_description": "",
+    "public_repos": 0,
+    "followers": 0,
+    "organization_members": 0,
+    "organization_created": "",
+    "total_repositories": 0,
+    "total_stars": 0,
+    "total_forks": 0,
+    "total_watchers": 0,
+    "total_size_kb": 0,
+    "primary_languages": {},
+    "active_repos_30d": 0,
+    "repositories": [],
+    "total_open_issues": 0,
+    "total_open_prs": 0,
+    "recent_issues_30d": 0,
+    "last_activity_check": "2025-11-10T13:45:55.503892"
   },
   "discourse": {
     "enabled": false,
@@ -27,26 +28,36 @@
   },
   "google_scholar": {
     "enabled": true,
-    "total_authors": 3,
-    "total_citations": 865,
-    "total_publications": 122,
-    "average_h_index": 19,
-    "average_i10_index": 35,
-    "institution": "University of Washington",
-    "last_updated": "2024-11-10T06:00:00Z"
+    "total_authors": 1,
+    "total_citations": 3280,
+    "total_publications": 20,
+    "average_h_index": 23,
+    "average_i10_index": 43,
+    "institution": "",
+    "authors_data": [
+      {
+        "author_id": "GR8BOxsAAAAJ",
+        "name": "Author GR8BOxsAAAAJ",
+        "citations": 3280,
+        "h_index": 23,
+        "i10_index": 43,
+        "publications": 20,
+        "profile_url": "https://scholar.google.com/citations?user=GR8BOxsAAAAJ&hl=en"
+      }
+    ],
+    "last_updated": "2025-11-10T13:45:57.993107"
   },
   "slack": {
-    "total_members": 80,
-    "active_members_30d": 22
+    "total_members": 0,
+    "active_members_30d": 0
   },
   "pypi": {
-    "total_downloads": 1520,
-    "downloads_30d": 450
+    "total_downloads": 824,
+    "downloads_30d": 824
   },
   "growth_metrics": {
-    "repositories_growth_30d": 2,
-    "stars_growth_30d": 125,
-    "contributors_growth_30d": 5,
-    "downloads_growth_30d": 120
+    "stars_growth_30d": 15,
+    "contributors_growth_30d": 3,
+    "downloads_growth_30d": 200
   }
 }

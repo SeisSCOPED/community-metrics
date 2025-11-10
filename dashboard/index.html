@@ -10,255 +10,226 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f5f5f7;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 40px;
         }
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
+            color: #1d1d1f;
+            margin-bottom: 40px;
+            font-size: 2.5em;
         }
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
         }
         .metric-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
             text-align: center;
-            border: 1px solid #e9ecef;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
         }
         .metric-value {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
-            color: #007bff;
+            margin-bottom: 8px;
         }
         .metric-label {
-            color: #666;
-            margin-top: 5px;
+            font-size: 1.1em;
+            opacity: 0.9;
         }
         .charts-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
+            gap: 40px;
+            margin-top: 40px;
         }
         .chart-container {
             background: white;
-            padding: 20px;
-            border-radius: 6px;
-            border: 1px solid #e9ecef;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .chart-container h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
         }
         .last-updated {
             text-align: center;
             color: #666;
-            font-size: 0.9em;
-            margin-top: 30px;
+            font-size: 0.95em;
+            margin-top: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 8px;
         }
         @media (max-width: 768px) {
             .charts-container {
                 grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌟 SeisSCOPED Community Metrics Dashboard</h1>
+        <h1>🌟 Community Metrics Dashboard</h1>
         
         <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-value" id="total-repositories">-</div>
-                <div class="metric-label">📁 Total Repositories</div>
+                <div class="metric-value"></div>
+                <div class="metric-label">⭐ GitHub Stars</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="total-stars">-</div>
-                <div class="metric-label">⭐ Total Stars</div>
+                <div class="metric-value"></div>
+                <div class="metric-label">👥 Contributors</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="organization-members">-</div>
-                <div class="metric-label">👥 Organization Members</div>
+                <div class="metric-value"></div>
+                <div class="metric-label">🍴 Forks</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="unique-contributors">-</div>
-                <div class="metric-label">🤝 Unique Contributors</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="total-forks">-</div>
-                <div class="metric-label">🍴 Total Forks</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="active-repos">-</div>
-                <div class="metric-label">🚀 Active Repos (30d)</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="total-citations">-</div>
-                <div class="metric-label">📚 Total Citations</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="h-index">-</div>
-                <div class="metric-label">📈 Avg H-Index</div>
+                <div class="metric-value">824</div>
+                <div class="metric-label">📦 Downloads (30d)</div>
             </div>
         </div>
 
         <div class="charts-container">
             <div class="chart-container">
-                <h3>GitHub Activity Over Time</h3>
-                <canvas id="githubChart"></canvas>
+                <h3>📈 GitHub Growth Over Time</h3>
+                <canvas id="githubChart" height="300"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Community Growth</h3>
-                <canvas id="communityChart"></canvas>
+                <h3>👥 Community Overview</h3>
+                <canvas id="communityChart" height="300"></canvas>
             </div>
         </div>
 
-        <div class="last-updated" id="last-updated">
-            Last updated: Loading...
+        <div class="last-updated">
+            <span class="status-indicator"></span>
+            Last updated: November 10, 2025 at 09:45 PM UTC
+            <br>
+            <small>Automatically updated daily via GitHub Actions</small>
         </div>
     </div>
 
     <script>
-        // Load and display metrics
-        async function loadMetrics() {
-            try {
-                const response = await fetch('latest.json');
-                const data = await response.json();
-                
-                // Update metric cards with organization-wide metrics
-                document.getElementById('total-repositories').textContent = data.github.total_repositories;
-                document.getElementById('total-stars').textContent = data.github.total_stars;
-                document.getElementById('organization-members').textContent = data.github.organization_members;
-                document.getElementById('unique-contributors').textContent = data.github.unique_contributors;
-                document.getElementById('total-forks').textContent = data.github.total_forks;
-                document.getElementById('active-repos').textContent = data.github.active_repos_30d;
-                
-                // Update Google Scholar metrics
-                if (data.google_scholar && data.google_scholar.enabled) {
-                    document.getElementById('total-citations').textContent = data.google_scholar.total_citations;
-                    document.getElementById('h-index').textContent = data.google_scholar.average_h_index;
-                } else {
-                    document.getElementById('total-citations').textContent = 'N/A';
-                    document.getElementById('h-index').textContent = 'N/A';
+        // Chart data embedded from Python
+        const chartData = {"contributors": [], "dates": ["2025-11-10"], "github_forks": [], "github_stars": [], "pypi_downloads": [824]};
+        const communityData = {
+            contributors: ,
+            discourse_users: 0,
+            slack_members: 0,
+            open_issues: 
+        };
+
+        // GitHub Growth Chart
+        const githubCtx = document.getElementById('githubChart').getContext('2d');
+        new Chart(githubCtx, {
+            type: 'line',
+            data: {
+                labels: chartData.dates,
+                datasets: [
+                    {
+                        label: 'Stars',
+                        data: chartData.github_stars,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0,123,255,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Forks',
+                        data: chartData.github_forks,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40,167,69,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
                 }
-                
-                // Update last updated time
-                const lastUpdated = new Date(data.last_updated).toLocaleString();
-                document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated}`;
-                
-                // Load historical data for charts
-                await loadCharts();
-                
-            } catch (error) {
-                console.error('Error loading metrics:', error);
-                document.getElementById('last-updated').textContent = 'Error loading data';
             }
-        }
+        });
 
-        async function loadCharts() {
-            try {
-                // Sample data for organization-wide metrics
-                const sampleData = {
-                    dates: ['2024-11-06', '2024-11-07', '2024-11-08', '2024-11-09', '2024-11-10'],
-                    total_stars: [1200, 1225, 1250, 1260, 1275],
-                    total_repositories: [24, 25, 25, 26, 26],
-                    unique_contributors: [42, 44, 45, 46, 47],
-                    active_repos: [6, 7, 8, 8, 9]
-                };
-
-                // GitHub Activity Chart
-                const githubCtx = document.getElementById('githubChart').getContext('2d');
-                new Chart(githubCtx, {
-                    type: 'line',
-                    data: {
-                        labels: sampleData.dates,
-                        datasets: [
-                            {
-                                label: 'Total Stars',
-                                data: sampleData.total_stars,
-                                borderColor: '#007bff',
-                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            },
-                            {
-                                label: 'Repositories',
-                                data: sampleData.total_repositories,
-                                borderColor: '#28a745',
-                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                                tension: 0.4,
-                                yAxisID: 'y1'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                beginAtZero: false,
-                                title: {
-                                    display: true,
-                                    text: 'Total Stars'
-                                }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                beginAtZero: false,
-                                title: {
-                                    display: true,
-                                    text: 'Repositories'
-                                },
-                                grid: {
-                                    drawOnChartArea: false,
-                                }
-                            }
-                        }
+        // Community Overview Chart
+        const communityCtx = document.getElementById('communityChart').getContext('2d');
+        new Chart(communityCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Contributors', 'Discourse Users', 'Slack Members', 'Open Issues'],
+                datasets: [{
+                    data: [
+                        communityData.contributors,
+                        communityData.discourse_users,
+                        communityData.slack_members,
+                        communityData.open_issues
+                    ],
+                    backgroundColor: [
+                        '#007bff',
+                        '#17a2b8',
+                        '#6c757d',
+                        '#ffc107'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
                     }
-                });
-
-                // Community Growth Chart
-                const communityCtx = document.getElementById('communityChart').getContext('2d');
-                new Chart(communityCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Org Members', 'Contributors', 'Slack Members', 'Scholar Citations', 'Publications'],
-                        datasets: [{
-                            label: 'Count',
-                            data: [16, 47, 80, 865, 122],
-                            backgroundColor: ['#007bff', '#28a745', '#6c757d', '#dc3545', '#fd7e14']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error loading charts:', error);
+                }
             }
-        }
-
-        // Load metrics when page loads
-        document.addEventListener('DOMContentLoaded', loadMetrics);
+        });
     </script>
 </body>
 </html>
