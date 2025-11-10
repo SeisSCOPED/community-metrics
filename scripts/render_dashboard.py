@@ -394,32 +394,59 @@ class DashboardRenderer:
         # Load data
         metrics = self.load_latest_metrics()
         df = self.load_historical_data()
-        chart_data = self.prepare_chart_data(df)
-        trends = self.calculate_trends(df)
         
-        # Format last updated time
-        last_updated = datetime.fromisoformat(metrics['last_updated'].replace('Z', '+00:00'))
-        last_updated_formatted = last_updated.strftime('%B %d, %Y at %I:%M %p UTC')
+        # Read the existing HTML file
+        with open(self.output_file, 'r', encoding='utf-8') as f:
+            html_content = f.read()
         
-        # Generate HTML
-        template = self.generate_html_template()
-        html_content = template.render(
-            metrics=metrics,
-            chart_data=chart_data,
-            trends=trends,
-            last_updated_formatted=last_updated_formatted
-        )
+        # Extract organization members data
+        org_members = metrics.get('github', {}).get('members_details', [])
+        members_json = json.dumps(org_members)
         
-        # Ensure dashboard directory exists
-        self.dashboard_dir.mkdir(exist_ok=True)
+        # Replace organization members data in JavaScript
+        import re
+        # Find and replace the organizationMembers array
+        pattern = r'let organizationMembers = \[\];'
+        replacement = f'let organizationMembers = {members_json};'
+        html_content = re.sub(pattern, replacement, html_content)
         
-        # Write HTML file
+        # Update metric values in the HTML
+        # Update stars
+        stars = metrics.get('github', {}).get('total_stars', 0)
+        html_content = re.sub(r'<div class="metric-value"></div>', 
+                             f'<div class="metric-value">{stars}</div>', 
+                             html_content, count=1)
+        
+        # Update contributors  
+        contributors = metrics.get('github', {}).get('unique_contributors', 0)
+        html_content = re.sub(r'<div class="metric-value"></div>', 
+                             f'<div class="metric-value">{contributors}</div>', 
+                             html_content, count=1)
+        
+        # Update forks
+        forks = metrics.get('github', {}).get('total_forks', 0)
+        html_content = re.sub(r'<div class="metric-value"></div>', 
+                             f'<div class="metric-value">{forks}</div>', 
+                             html_content, count=1)
+        
+        # Update last updated time
+        try:
+            last_updated = datetime.fromisoformat(metrics['last_updated'].replace('Z', '+00:00'))
+            last_updated_formatted = last_updated.strftime('%B %d, %Y at %I:%M %p UTC')
+        except:
+            last_updated_formatted = datetime.utcnow().strftime('%B %d, %Y at %I:%M %p UTC')
+            
+        pattern = r'Last updated: [^<]+'
+        replacement = f'Last updated: {last_updated_formatted}'
+        html_content = re.sub(pattern, replacement, html_content)
+        
+        # Write the updated HTML file
         with open(self.output_file, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
-        print(f"Dashboard rendered successfully to {self.output_file}")
-        print(f"Total GitHub Stars: {metrics['github'].get('total_stars', 0)}")
-        print(f"Organization Members: {metrics['github'].get('organization_members', 0)}")
+        print(f"Dashboard updated successfully at {self.output_file}")
+        print(f"Total GitHub Stars: {metrics.get('github', {}).get('total_stars', 0)}")
+        print(f"Organization Members: {len(org_members)}")
         
         return str(self.output_file)
 

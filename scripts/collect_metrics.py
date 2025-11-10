@@ -93,7 +93,20 @@ class MetricsCollector:
             # Organization members
             members_url = f"https://api.github.com/orgs/{org}/members"
             members_response = requests.get(members_url, headers=headers)
-            members_count = len(members_response.json()) if members_response.status_code == 200 else 0
+            members_data = []
+            members_count = 0
+            
+            if members_response.status_code == 200:
+                members_list = members_response.json()
+                members_count = len(members_list)
+                # Get detailed member info (first 20 members for avatars)
+                for member in members_list[:20]:
+                    members_data.append({
+                        'login': member.get('login', ''),
+                        'avatar_url': member.get('avatar_url', ''),
+                        'html_url': member.get('html_url', ''),
+                        'type': member.get('type', 'User')
+                    })
             
             return {
                 'organization_name': org_data.get('name', org),
@@ -102,6 +115,7 @@ class MetricsCollector:
                 'followers': org_data.get('followers', 0),
                 'organization_members': members_count,
                 'organization_created': org_data.get('created_at', ''),
+                'members_details': members_data,
             }
         except Exception as e:
             print(f"Error getting organization metrics: {e}")
