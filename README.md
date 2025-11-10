@@ -12,16 +12,19 @@ An automated dashboard for tracking open-source community health and growth metr
 
 ## 📈 Metrics Tracked
 
-### GitHub Repository Metrics
-- ⭐ Stars and forks
-- 👥 Contributors count
-- 🐛 Open issues and pull requests
-- 📊 Commit activity
+### GitHub Organization Metrics
+- 📁 Total repositories in the organization
+- ⭐ Aggregate stars and forks across all repos
+- 👥 Organization members and unique contributors
+- 🐛 Open issues and pull requests organization-wide
+- 📊 Repository activity and language statistics
+- � Active repositories in the last 30 days
 
-### Community Engagement
-- 💬 Discourse forum users and posts
-- 💼 Slack workspace members and activity
-- 📦 PyPI package download statistics
+### Academic Impact & Community Engagement
+- 📚 Google Scholar author profiles and citation metrics
+- 📄 Publication counts, citations, and h-index tracking
+- 💼 Slack workspace members and activity (optional)
+- 📦 PyPI package download statistics (optional)
 - 📈 Growth trends and analytics
 
 ## 🚀 Quick Start
@@ -37,24 +40,31 @@ An automated dashboard for tracking open-source community health and growth metr
 3. **Configure your data sources** in `config.yaml`:
    ```yaml
    github:
-     repository: "your-org/your-repo"
-     token: "ghp_your_token_here"
+     organization: "SeisSCOPED"  # Your GitHub organization
+     repository: "SeisSCOPED/community-metrics"
+     token: "ghp_your_token_here"  # Required for organization metrics
+     collect_org_metrics: true
    
-   discourse:
-     base_url: "https://your-forum.discourse.group"
-     api_key: "your_api_key"
+   google_scholar:
+     author_ids:  # Google Scholar author IDs to track
+       - "GR8BOxsAAAAJ"  # Example author ID from Scholar profile URL
+     institution: "University of Washington"  # Optional: filter by institution
+   
+   slack:
+     token: "xoxb-your-slack-token"  # Optional
    
    pypi:
-     package_name: "your-package-name"
+     package_name: "your-package-name"  # Optional
    ```
 
 ### 2. GitHub Secrets Configuration
 
 Add the following secrets to your GitHub repository (Settings → Secrets and variables → Actions):
 
-- `GITHUB_TOKEN`: Personal access token with repo permissions
-- `DISCOURSE_API_KEY`: Discourse API key (if using Discourse)
-- `SLACK_TOKEN`: Slack bot token (if using Slack)
+- `GITHUB_TOKEN`: Personal access token with `read:org` and `repo` permissions (required for organization metrics)
+- `SLACK_TOKEN`: Slack bot token (optional, if using Slack)
+
+**Note**: Google Scholar metrics are collected without API keys using web scraping. No additional authentication required.
 
 ### 3. Enable GitHub Pages
 
@@ -86,23 +96,40 @@ open dashboard/index.html
 The `config.yaml` file controls which metrics are collected:
 
 ```yaml
-# GitHub Configuration
+# GitHub Organization Configuration
 github:
-  repository: "owner/repo-name"
-  token: "your_github_token"  # Optional but recommended
+  organization: "SeisSCOPED"
+  repository: "SeisSCOPED/community-metrics"
+  token: "your_github_token"  # Required for organization metrics
+  collect_org_metrics: true
+  
+  # Comprehensive metrics collected:
+  # - Organization overview (repos, members, followers)
+  # - All repository statistics (stars, forks, watchers)
+  # - Contributor activity across all repositories
+  # - Issue and PR activity organization-wide
+  # - Language distribution and activity trends
 
-# Discourse Forum
-discourse:
-  base_url: "https://discourse.example.com"
-  api_key: "your_discourse_api_key"
+# Google Scholar Configuration
+google_scholar:
+  author_ids:  # List of Google Scholar author IDs to track
+    - "ABC123DEF"  # Extract from Scholar profile URL
+    - "XYZ789GHI"  # https://scholar.google.com/citations?user=ABC123DEF
+  institution: "University Name"  # Optional: institution filter
+  
+  # Metrics collected:
+  # - Total citations for each author
+  # - h-index and i10-index
+  # - Recent publication counts
+  # - Citation growth trends
+  # - Aggregate metrics across all tracked authors
 
-# Slack Workspace
+# Optional integrations
 slack:
-  token: "xoxb-your-slack-token"
+  token: "xoxb-your-slack-token"  # Slack workspace metrics
 
-# PyPI Package
 pypi:
-  package_name: "your-package-name"
+  package_name: "your-package-name"  # PyPI download statistics
 ```
 
 ### GitHub Actions Workflow

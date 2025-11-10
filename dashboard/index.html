@@ -74,24 +74,40 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌟 Community Metrics Dashboard</h1>
+        <h1>🌟 SeisSCOPED Community Metrics Dashboard</h1>
         
         <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-value" id="github-stars">-</div>
-                <div class="metric-label">GitHub Stars</div>
+                <div class="metric-value" id="total-repositories">-</div>
+                <div class="metric-label">📁 Total Repositories</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="github-forks">-</div>
-                <div class="metric-label">GitHub Forks</div>
+                <div class="metric-value" id="total-stars">-</div>
+                <div class="metric-label">⭐ Total Stars</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="contributors">-</div>
-                <div class="metric-label">Contributors</div>
+                <div class="metric-value" id="organization-members">-</div>
+                <div class="metric-label">👥 Organization Members</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value" id="pypi-downloads">-</div>
-                <div class="metric-label">PyPI Downloads (30d)</div>
+                <div class="metric-value" id="unique-contributors">-</div>
+                <div class="metric-label">🤝 Unique Contributors</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="total-forks">-</div>
+                <div class="metric-label">🍴 Total Forks</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="active-repos">-</div>
+                <div class="metric-label">🚀 Active Repos (30d)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="total-citations">-</div>
+                <div class="metric-label">📚 Total Citations</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="h-index">-</div>
+                <div class="metric-label">📈 Avg H-Index</div>
             </div>
         </div>
 
@@ -118,11 +134,22 @@
                 const response = await fetch('latest.json');
                 const data = await response.json();
                 
-                // Update metric cards
-                document.getElementById('github-stars').textContent = data.github.stars;
-                document.getElementById('github-forks').textContent = data.github.forks;
-                document.getElementById('contributors').textContent = data.github.contributors;
-                document.getElementById('pypi-downloads').textContent = data.pypi.downloads_30d;
+                // Update metric cards with organization-wide metrics
+                document.getElementById('total-repositories').textContent = data.github.total_repositories;
+                document.getElementById('total-stars').textContent = data.github.total_stars;
+                document.getElementById('organization-members').textContent = data.github.organization_members;
+                document.getElementById('unique-contributors').textContent = data.github.unique_contributors;
+                document.getElementById('total-forks').textContent = data.github.total_forks;
+                document.getElementById('active-repos').textContent = data.github.active_repos_30d;
+                
+                // Update Google Scholar metrics
+                if (data.google_scholar && data.google_scholar.enabled) {
+                    document.getElementById('total-citations').textContent = data.google_scholar.total_citations;
+                    document.getElementById('h-index').textContent = data.google_scholar.average_h_index;
+                } else {
+                    document.getElementById('total-citations').textContent = 'N/A';
+                    document.getElementById('h-index').textContent = 'N/A';
+                }
                 
                 // Update last updated time
                 const lastUpdated = new Date(data.last_updated).toLocaleString();
@@ -139,13 +166,13 @@
 
         async function loadCharts() {
             try {
-                // This would normally load from community_metrics.csv
-                // For now, using sample data
+                // Sample data for organization-wide metrics
                 const sampleData = {
-                    dates: ['2024-01-01', '2024-01-02', '2024-01-03', '2024-01-04', '2024-01-05'],
-                    stars: [148, 150, 152, 155, 158],
-                    forks: [24, 25, 26, 27, 28],
-                    contributors: [10, 11, 12, 12, 13]
+                    dates: ['2024-11-06', '2024-11-07', '2024-11-08', '2024-11-09', '2024-11-10'],
+                    total_stars: [1200, 1225, 1250, 1260, 1275],
+                    total_repositories: [24, 25, 25, 26, 26],
+                    unique_contributors: [42, 44, 45, 46, 47],
+                    active_repos: [6, 7, 8, 8, 9]
                 };
 
                 // GitHub Activity Chart
@@ -156,16 +183,20 @@
                         labels: sampleData.dates,
                         datasets: [
                             {
-                                label: 'Stars',
-                                data: sampleData.stars,
+                                label: 'Total Stars',
+                                data: sampleData.total_stars,
                                 borderColor: '#007bff',
-                                tension: 0.4
+                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                tension: 0.4,
+                                fill: true
                             },
                             {
-                                label: 'Forks',
-                                data: sampleData.forks,
+                                label: 'Repositories',
+                                data: sampleData.total_repositories,
                                 borderColor: '#28a745',
-                                tension: 0.4
+                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                tension: 0.4,
+                                yAxisID: 'y1'
                             }
                         ]
                     },
@@ -173,7 +204,27 @@
                         responsive: true,
                         scales: {
                             y: {
-                                beginAtZero: false
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Total Stars'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Repositories'
+                                },
+                                grid: {
+                                    drawOnChartArea: false,
+                                }
                             }
                         }
                     }
@@ -184,11 +235,11 @@
                 new Chart(communityCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['Contributors', 'Discourse Users', 'Slack Members'],
+                        labels: ['Org Members', 'Contributors', 'Slack Members', 'Scholar Citations', 'Publications'],
                         datasets: [{
                             label: 'Count',
-                            data: [13, 47, 80],
-                            backgroundColor: ['#007bff', '#17a2b8', '#6c757d']
+                            data: [16, 47, 80, 865, 122],
+                            backgroundColor: ['#007bff', '#28a745', '#6c757d', '#dc3545', '#fd7e14']
                         }]
                     },
                     options: {

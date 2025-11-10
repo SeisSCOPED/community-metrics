@@ -16,8 +16,11 @@ import json
 import csv
 import requests
 import yaml
+import re
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
+from urllib.parse import quote
 
 
 class MetricsCollector:
@@ -39,78 +42,419 @@ class MetricsCollector:
             return {}
     
     def get_github_metrics(self):
-        """Collect GitHub repository metrics."""
-        github_token = os.getenv('GITHUB_TOKEN') or self.config.get('github', {}).get('token')
-        repo = self.config.get('github', {}).get('repository', 'owner/repo')
+        """Collect comprehensive GitHub organization and repository metrics."""
+        github_config = self.config.get('github', {})
+        github_token = os.getenv('GITHUB_TOKEN') or github_config.get('token')
+        organization = github_config.get('organization', 'SeisSCOPED')
+        main_repo = github_config.get('repository', f'{organization}/community-metrics')
         
         if not github_token:
-            print("Warning: No GitHub token provided. Using public API (rate limited).")
+            print("Warning: No GitHub token provided. Organization metrics require authentication.")
+            return self._get_basic_repo_metrics(main_repo, None)
         
-        headers = {'Authorization': f'token {github_token}'} if github_token else {}
+        headers = {
+            'Authorization': f'token {github_token}',
+            'Accept': 'application/vnd.github.v3+json'
+        }
         
         try:
-            # Repository basic info
+            metrics = {}
+            
+            # Organization overview
+            org_metrics = self._get_organization_metrics(organization, headers)
+            metrics.update(org_metrics)
+            
+            # All repositories in organization
+            repo_metrics = self._get_all_repositories_metrics(organization, headers)
+            metrics.update(repo_metrics)
+            
+            # Contributor activity across organization
+            contributor_metrics = self._get_contributor_metrics(organization, headers)
+            metrics.update(contributor_metrics)
+            
+            # Community health metrics
+            community_metrics = self._get_community_health_metrics(organization, headers)
+            metrics.update(community_metrics)
+            
+            return metrics
+            
+        except Exception as e:
+            print(f"Error collecting GitHub organization metrics: {e}")
+            return self._get_default_github_metrics()
+    
+    def _get_organization_metrics(self, org, headers):
+        """Get organization-level statistics."""
+        try:
+            # Organization info
+            org_url = f"https://api.github.com/orgs/{org}"
+            org_response = requests.get(org_url, headers=headers)
+            org_data = org_response.json()
+            
+            # Organization members
+            members_url = f"https://api.github.com/orgs/{org}/members"
+            members_response = requests.get(members_url, headers=headers)
+            members_count = len(members_response.json()) if members_response.status_code == 200 else 0
+            
+            return {
+                'organization_name': org_data.get('name', org),
+                'organization_description': org_data.get('description', ''),
+                'public_repos': org_data.get('public_repos', 0),
+                'followers': org_data.get('followers', 0),
+                'organization_members': members_count,
+                'organization_created': org_data.get('created_at', ''),
+            }
+        except Exception as e:
+            print(f"Error getting organization metrics: {e}")
+            return {}
+    
+    def _get_all_repositories_metrics(self, org, headers):
+        """Get metrics for all repositories in the organization."""
+        try:
+            repos_url = f"https://api.github.com/orgs/{org}/repos"
+            params = {'type': 'public', 'sort': 'updated', 'per_page': 100}
+            
+            all_repos = []
+            page = 1
+            
+            while True:
+                params['page'] = page
+                repos_response = requests.get(repos_url, headers=headers, params=params)
+                
+                if repos_response.status_code != 200:
+                    break
+                    
+                repos_data = repos_response.json()
+                if not repos_data:
+                    break
+                    
+                all_repos.extend(repos_data)
+                page += 1
+                
+                # Limit to prevent excessive API calls
+                if page > 10:  
+                    break
+            
+            # Aggregate metrics across all repositories
+            total_stars = sum(repo.get('stargazers_count', 0) for repo in all_repos)
+            total_forks = sum(repo.get('forks_count', 0) for repo in all_repos)
+            total_watchers = sum(repo.get('watchers_count', 0) for repo in all_repos)
+            total_size = sum(repo.get('size', 0) for repo in all_repos)
+            
+            # Language statistics
+            languages = {}
+            for repo in all_repos:
+                lang = repo.get('language')
+                if lang:
+                    languages[lang] = languages.get(lang, 0) + 1
+            
+            # Repository activity (recently updated)
+            thirty_days_ago = (datetime.now() - timedelta(days=30)).isoformat()
+            recent_repos = [
+                repo for repo in all_repos 
+                if repo.get('updated_at', '') > thirty_days_ago
+            ]
+            
+            return {
+                'total_repositories': len(all_repos),
+                'total_stars': total_stars,
+                'total_forks': total_forks,
+                'total_watchers': total_watchers,
+                'total_size_kb': total_size,
+                'primary_languages': languages,
+                'active_repos_30d': len(recent_repos),
+                'repositories': all_repos[:10]  # Store top 10 for dashboard
+            }
+            
+        except Exception as e:
+            print(f"Error getting repository metrics: {e}")
+            return {}
+    
+    def _get_contributor_metrics(self, org, headers):
+        """Get contributor statistics across the organization."""
+        try:
+            # This is a simplified version - in practice, you'd need to
+            # iterate through all repos to get comprehensive contributor data
+            repos_url = f"https://api.github.com/orgs/{org}/repos"
+            repos_response = requests.get(repos_url, headers=headers, 
+                                        params={'per_page': 10, 'sort': 'updated'})
+            
+            if repos_response.status_code != 200:
+                return {}
+                
+            repos = repos_response.json()
+            all_contributors = set()
+            
+            # Get contributors from top repositories
+            for repo in repos[:5]:  # Limit to prevent rate limiting
+                contributors_url = f"https://api.github.com/repos/{repo['full_name']}/contributors"
+                contrib_response = requests.get(contributors_url, headers=headers)
+                
+                if contrib_response.status_code == 200:
+                    contributors = contrib_response.json()
+                    for contrib in contributors:
+                        all_contributors.add(contrib.get('login'))
+            
+            return {
+                'unique_contributors': len(all_contributors),
+                'contributor_list': list(all_contributors)[:50]  # Store top 50
+            }
+            
+        except Exception as e:
+            print(f"Error getting contributor metrics: {e}")
+            return {}
+    
+    def _get_community_health_metrics(self, org, headers):
+        """Get community health and activity metrics."""
+        try:
+            # Get issues and PRs across the organization
+            # This is simplified - ideally you'd aggregate across all repos
+            search_url = "https://api.github.com/search/issues"
+            
+            # Open issues in organization
+            issues_params = {
+                'q': f'org:{org} type:issue state:open',
+                'per_page': 1
+            }
+            issues_response = requests.get(search_url, headers=headers, params=issues_params)
+            total_open_issues = 0
+            if issues_response.status_code == 200:
+                total_open_issues = issues_response.json().get('total_count', 0)
+            
+            # Open PRs in organization
+            prs_params = {
+                'q': f'org:{org} type:pr state:open',
+                'per_page': 1
+            }
+            prs_response = requests.get(search_url, headers=headers, params=prs_params)
+            total_open_prs = 0
+            if prs_response.status_code == 200:
+                total_open_prs = prs_response.json().get('total_count', 0)
+            
+            # Recent activity (last 30 days)
+            thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+            recent_issues_params = {
+                'q': f'org:{org} type:issue created:>{thirty_days_ago}',
+                'per_page': 1
+            }
+            recent_issues_response = requests.get(search_url, headers=headers, params=recent_issues_params)
+            recent_issues = 0
+            if recent_issues_response.status_code == 200:
+                recent_issues = recent_issues_response.json().get('total_count', 0)
+            
+            return {
+                'total_open_issues': total_open_issues,
+                'total_open_prs': total_open_prs,
+                'recent_issues_30d': recent_issues,
+                'last_activity_check': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            print(f"Error getting community health metrics: {e}")
+            return {}
+    
+    def _get_basic_repo_metrics(self, repo, headers):
+        """Fallback method for basic repository metrics without token."""
+        try:
             repo_url = f"https://api.github.com/repos/{repo}"
-            repo_response = requests.get(repo_url, headers=headers)
+            repo_response = requests.get(repo_url, headers=headers or {})
             repo_data = repo_response.json()
             
-            # Contributors
-            contributors_url = f"https://api.github.com/repos/{repo}/contributors"
-            contributors_response = requests.get(contributors_url, headers=headers)
-            contributors_count = len(contributors_response.json()) if contributors_response.status_code == 200 else 0
-            
-            # Issues and PRs
-            issues_url = f"https://api.github.com/repos/{repo}/issues?state=open"
-            issues_response = requests.get(issues_url, headers=headers)
-            issues_data = issues_response.json() if issues_response.status_code == 200 else []
-            
-            open_issues = len([issue for issue in issues_data if 'pull_request' not in issue])
-            open_prs = len([issue for issue in issues_data if 'pull_request' in issue])
-            
             return {
-                'stars': repo_data.get('stargazers_count', 0),
-                'forks': repo_data.get('forks_count', 0),
-                'contributors': contributors_count,
-                'open_issues': open_issues,
-                'open_prs': open_prs,
-                'total_commits': repo_data.get('size', 0)  # Approximation
+                'total_stars': repo_data.get('stargazers_count', 0),
+                'total_forks': repo_data.get('forks_count', 0),
+                'total_watchers': repo_data.get('watchers_count', 0),
+                'open_issues': repo_data.get('open_issues_count', 0)
             }
-            
         except Exception as e:
-            print(f"Error collecting GitHub metrics: {e}")
-            return {
-                'stars': 0, 'forks': 0, 'contributors': 0,
-                'open_issues': 0, 'open_prs': 0, 'total_commits': 0
-            }
+            print(f"Error getting basic repo metrics: {e}")
+            return self._get_default_github_metrics()
+    
+    def _get_default_github_metrics(self):
+        """Return default GitHub metrics structure."""
+        return {
+            'total_repositories': 0,
+            'total_stars': 0,
+            'total_forks': 0,
+            'total_watchers': 0,
+            'public_repos': 0,
+            'organization_members': 0,
+            'unique_contributors': 0,
+            'total_open_issues': 0,
+            'total_open_prs': 0,
+            'active_repos_30d': 0
+        }
     
     def get_discourse_metrics(self):
-        """Collect Discourse forum metrics."""
-        discourse_config = self.config.get('discourse', {})
-        api_key = os.getenv('DISCOURSE_API_KEY') or discourse_config.get('api_key')
-        base_url = discourse_config.get('base_url', 'https://discourse.example.com')
+        """Discourse forum metrics - DISABLED."""
+        print("Info: Discourse metrics collection is disabled.")
+        return {
+            'enabled': False,
+            'total_users': 0,
+            'total_posts': 0,
+            'active_users_30d': 0
+        }
+    
+    def get_google_scholar_metrics(self):
+        """Collect Google Scholar author metrics."""
+        scholar_config = self.config.get('google_scholar', {})
+        author_ids = scholar_config.get('author_ids', [])
+        institution = scholar_config.get('institution', '')
         
-        if not api_key:
-            print("Warning: No Discourse API key provided. Skipping Discourse metrics.")
-            return {'total_users': 0, 'total_posts': 0, 'active_users_30d': 0}
+        if not author_ids:
+            print("Info: No Google Scholar author IDs configured.")
+            return self._get_default_scholar_metrics()
         
-        headers = {'Api-Key': api_key, 'Api-Username': 'system'}
+        print(f"Collecting Google Scholar metrics for {len(author_ids)} authors...")
         
         try:
-            # Basic stats
-            stats_url = f"{base_url}/admin/reports/signups.json"
-            response = requests.get(stats_url, headers=headers)
+            all_authors_data = []
+            total_citations = 0
+            total_publications = 0
+            total_h_index = 0
+            total_i10_index = 0
             
-            # This is a simplified implementation
-            # In practice, you'd need to make multiple API calls to get comprehensive stats
+            for author_id in author_ids:
+                author_data = self._get_scholar_author_data(author_id)
+                if author_data:
+                    all_authors_data.append(author_data)
+                    total_citations += author_data.get('citations', 0)
+                    total_publications += author_data.get('publications', 0)
+                    total_h_index += author_data.get('h_index', 0)
+                    total_i10_index += author_data.get('i10_index', 0)
+                
+                # Be respectful to Google Scholar - add delay
+                time.sleep(2)
+            
             return {
-                'total_users': 50,  # Placeholder
-                'total_posts': 150,  # Placeholder
-                'active_users_30d': 20  # Placeholder
+                'enabled': True,
+                'total_authors': len(all_authors_data),
+                'total_citations': total_citations,
+                'total_publications': total_publications,
+                'average_h_index': round(total_h_index / len(all_authors_data)) if all_authors_data else 0,
+                'average_i10_index': round(total_i10_index / len(all_authors_data)) if all_authors_data else 0,
+                'institution': institution,
+                'authors_data': all_authors_data,
+                'last_updated': datetime.now().isoformat()
             }
             
         except Exception as e:
-            print(f"Error collecting Discourse metrics: {e}")
-            return {'total_users': 0, 'total_posts': 0, 'active_users_30d': 0}
+            print(f"Error collecting Google Scholar metrics: {e}")
+            return self._get_default_scholar_metrics()
+    
+    def _get_scholar_author_data(self, author_id):
+        """Get individual author data from Google Scholar."""
+        try:
+            # Construct Google Scholar profile URL
+            base_url = "https://scholar.google.com/citations"
+            params = f"?user={author_id}&hl=en"
+            url = base_url + params
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code != 200:
+                print(f"Warning: Could not fetch data for author {author_id}")
+                return None
+            
+            # Parse the HTML response (simplified extraction)
+            content = response.text
+            
+            # Extract basic metrics using regex patterns
+            author_name = self._extract_pattern(content, r'<title>([^<]+) - Google Scholar</title>')
+            citations = self._extract_citations(content)
+            h_index = self._extract_h_index(content)
+            i10_index = self._extract_i10_index(content)
+            
+            # Count publications (approximate from visible entries)
+            publications = self._count_publications(content)
+            
+            return {
+                'author_id': author_id,
+                'name': author_name or f"Author {author_id}",
+                'citations': citations,
+                'h_index': h_index,
+                'i10_index': i10_index,
+                'publications': publications,
+                'profile_url': url
+            }
+            
+        except Exception as e:
+            print(f"Error fetching author data for {author_id}: {e}")
+            return None
+    
+    def _extract_pattern(self, content, pattern):
+        """Extract text using regex pattern."""
+        import re
+        match = re.search(pattern, content)
+        return match.group(1) if match else None
+    
+    def _extract_citations(self, content):
+        """Extract total citations from Scholar profile."""
+        import re
+        # Look for citations count in the statistics table
+        patterns = [
+            r'Citations</a></td><td class="gsc_rsb_std">(\d+)</td>',
+            r'Citations</td><td[^>]*>(\d+)</td>'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, content)
+            if match:
+                return int(match.group(1))
+        return 0
+    
+    def _extract_h_index(self, content):
+        """Extract h-index from Scholar profile."""
+        import re
+        patterns = [
+            r'h-index</a></td><td class="gsc_rsb_std">(\d+)</td>',
+            r'h-index</td><td[^>]*>(\d+)</td>'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, content)
+            if match:
+                return int(match.group(1))
+        return 0
+    
+    def _extract_i10_index(self, content):
+        """Extract i10-index from Scholar profile."""
+        import re
+        patterns = [
+            r'i10-index</a></td><td class="gsc_rsb_std">(\d+)</td>',
+            r'i10-index</td><td[^>]*>(\d+)</td>'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, content)
+            if match:
+                return int(match.group(1))
+        return 0
+    
+    def _count_publications(self, content):
+        """Count publications from Scholar profile."""
+        import re
+        # Count publication entries (simplified approach)
+        pub_pattern = r'class="gsc_a_tr"'
+        matches = re.findall(pub_pattern, content)
+        return len(matches)
+    
+    def _get_default_scholar_metrics(self):
+        """Return default Google Scholar metrics structure."""
+        return {
+            'enabled': False,
+            'total_authors': 0,
+            'total_citations': 0,
+            'total_publications': 0,
+            'average_h_index': 0,
+            'average_i10_index': 0,
+            'institution': '',
+            'authors_data': [],
+            'last_updated': datetime.now().isoformat()
+        }
     
     def get_slack_metrics(self):
         """Collect Slack workspace metrics."""
@@ -187,18 +531,29 @@ class MetricsCollector:
         """Save metrics to CSV file for historical tracking."""
         date_str = datetime.now().strftime('%Y-%m-%d')
         
-        # Prepare row data
+        github = metrics.get('github', {})
+        scholar = metrics.get('google_scholar', {})
+        slack = metrics.get('slack', {})
+        pypi = metrics.get('pypi', {})
+        
+        # Prepare row data including Google Scholar metrics
         row_data = [
             date_str,
-            metrics['github']['stars'],
-            metrics['github']['forks'],
-            metrics['github']['contributors'],
-            metrics['github']['open_issues'],
-            metrics['github']['open_prs'],
-            metrics['discourse']['total_users'],
-            metrics['discourse']['total_posts'],
-            metrics['slack']['total_members'],
-            metrics['pypi']['downloads_30d']
+            github.get('total_repositories', 0),
+            github.get('total_stars', 0),
+            github.get('total_forks', 0),
+            github.get('total_watchers', 0),
+            github.get('organization_members', 0),
+            github.get('unique_contributors', 0),
+            github.get('total_open_issues', 0),
+            github.get('total_open_prs', 0),
+            github.get('active_repos_30d', 0),
+            scholar.get('total_authors', 0),
+            scholar.get('total_citations', 0),
+            scholar.get('total_publications', 0),
+            scholar.get('average_h_index', 0),
+            slack.get('total_members', 0),
+            pypi.get('downloads_30d', 0)
         ]
         
         # Check if file exists and has headers
@@ -210,9 +565,12 @@ class MetricsCollector:
             # Write headers if file is new
             if not file_exists:
                 headers = [
-                    'date', 'github_stars', 'github_forks', 'github_contributors',
-                    'github_issues_open', 'github_prs_open', 'discourse_users',
-                    'discourse_posts', 'slack_members', 'pypi_downloads'
+                    'date', 'total_repositories', 'total_stars', 'total_forks',
+                    'total_watchers', 'organization_members',
+                    'unique_contributors', 'total_open_issues', 'total_open_prs',
+                    'active_repos_30d', 'scholar_authors', 'scholar_citations',
+                    'scholar_publications', 'scholar_h_index', 'slack_members',
+                    'pypi_downloads'
                 ]
                 writer.writerow(headers)
             
@@ -229,6 +587,7 @@ class MetricsCollector:
         
         github_metrics = self.get_github_metrics()
         discourse_metrics = self.get_discourse_metrics()
+        google_scholar_metrics = self.get_google_scholar_metrics()
         slack_metrics = self.get_slack_metrics()
         pypi_metrics = self.get_pypi_metrics()
         
@@ -237,10 +596,12 @@ class MetricsCollector:
             'last_updated': datetime.utcnow().isoformat() + 'Z',
             'github': github_metrics,
             'discourse': discourse_metrics,
+            'google_scholar': google_scholar_metrics,
             'slack': slack_metrics,
             'pypi': pypi_metrics,
             'growth_metrics': self.calculate_growth_metrics({
                 'github': github_metrics,
+                'google_scholar': google_scholar_metrics,
                 'pypi': pypi_metrics
             })
         }
