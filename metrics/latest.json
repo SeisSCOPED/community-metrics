@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-10T21:45:58.213516Z",
+  "last_updated": "2025-11-10T22:06:21.471931Z",
   "github": {
     "organization_name": "SeisSCOPED",
     "organization_description": "",
@@ -18,7 +18,7 @@
     "total_open_issues": 0,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-10T13:45:55.503892"
+    "last_activity_check": "2025-11-10T14:06:18.789487"
   },
   "discourse": {
     "enabled": false,
@@ -45,7 +45,7 @@
         "profile_url": "https://scholar.google.com/citations?user=GR8BOxsAAAAJ&hl=en"
       }
     ],
-    "last_updated": "2025-11-10T13:45:57.993107"
+    "last_updated": "2025-11-10T14:06:21.283446"
   },
   "slack": {
     "total_members": 0,
@@ -56,8 +56,12 @@
     "downloads_30d": 824
   },
   "growth_metrics": {
-    "stars_growth_30d": 15,
-    "contributors_growth_30d": 3,
-    "downloads_growth_30d": 200
+    "stars_growth_7d": 0,
+    "stars_growth_30d": 0,
+    "citations_growth_7d": 0,
+    "citations_growth_30d": 0,
+    "repositories_growth_30d": 0,
+    "contributors_growth_30d": 0,
+    "data_points": 1
   }
 }

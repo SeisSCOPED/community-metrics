@@ -519,13 +519,100 @@ class MetricsCollector:
     
     def calculate_growth_metrics(self, current_data, historical_data=None):
         """Calculate growth metrics compared to previous periods."""
-        # This would typically compare with data from 30 days ago
-        # For now, using placeholder calculations
-        return {
-            'stars_growth_30d': 15,
-            'contributors_growth_30d': 3,
-            'downloads_growth_30d': 200
-        }
+        try:
+            # Load historical data from CSV
+            historical_data = self._load_historical_data()
+            
+            if len(historical_data) < 2:
+                # Not enough historical data yet
+                return {
+                    'stars_growth_7d': 0,
+                    'stars_growth_30d': 0,
+                    'citations_growth_7d': 0,
+                    'citations_growth_30d': 0,
+                    'repositories_growth_30d': 0,
+                    'contributors_growth_30d': 0,
+                    'data_points': len(historical_data)
+                }
+            
+            # Get current values
+            current_github = current_data.get('github', {})
+            current_scholar = current_data.get('google_scholar', {})
+            
+            current_stars = current_github.get('total_stars', 0)
+            current_citations = current_scholar.get('total_citations', 0)
+            current_repos = current_github.get('total_repositories', 0)
+            current_contributors = current_github.get('unique_contributors', 0)
+            
+            # Calculate growth metrics
+            growth_metrics = {}
+            
+            # 7-day growth (if we have data from 7+ days ago)
+            if len(historical_data) >= 7:
+                week_ago = historical_data[-7]
+                growth_metrics['stars_growth_7d'] = current_stars - week_ago.get('total_stars', 0)
+                growth_metrics['citations_growth_7d'] = current_citations - week_ago.get('scholar_citations', 0)
+            else:
+                growth_metrics['stars_growth_7d'] = 0
+                growth_metrics['citations_growth_7d'] = 0
+            
+            # 30-day growth (if we have data from 30+ days ago)
+            if len(historical_data) >= 30:
+                month_ago = historical_data[-30]
+                growth_metrics['stars_growth_30d'] = current_stars - month_ago.get('total_stars', 0)
+                growth_metrics['citations_growth_30d'] = current_citations - month_ago.get('scholar_citations', 0)
+                growth_metrics['repositories_growth_30d'] = current_repos - month_ago.get('total_repositories', 0)
+                growth_metrics['contributors_growth_30d'] = current_contributors - month_ago.get('unique_contributors', 0)
+            else:
+                # Use available data for shorter-term growth
+                oldest = historical_data[0]
+                growth_metrics['stars_growth_30d'] = current_stars - oldest.get('total_stars', 0)
+                growth_metrics['citations_growth_30d'] = current_citations - oldest.get('scholar_citations', 0)
+                growth_metrics['repositories_growth_30d'] = current_repos - oldest.get('total_repositories', 0)
+                growth_metrics['contributors_growth_30d'] = current_contributors - oldest.get('unique_contributors', 0)
+            
+            growth_metrics['data_points'] = len(historical_data)
+            return growth_metrics
+            
+        except Exception as e:
+            print(f"Error calculating growth metrics: {e}")
+            return {
+                'stars_growth_7d': 0,
+                'stars_growth_30d': 0,
+                'citations_growth_7d': 0,
+                'citations_growth_30d': 0,
+                'repositories_growth_30d': 0,
+                'contributors_growth_30d': 0,
+                'data_points': 0
+            }
+    
+    def _load_historical_data(self):
+        """Load historical data from CSV for growth calculations."""
+        try:
+            if not self.csv_file.exists():
+                return []
+            
+            historical_data = []
+            with open(self.csv_file, 'r', newline='') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    # Convert string values to integers where needed
+                    processed_row = {}
+                    for key, value in row.items():
+                        try:
+                            if key != 'date':
+                                processed_row[key] = int(value) if value else 0
+                            else:
+                                processed_row[key] = value
+                        except ValueError:
+                            processed_row[key] = 0
+                    historical_data.append(processed_row)
+            
+            return historical_data
+            
+        except Exception as e:
+            print(f"Error loading historical data: {e}")
+            return []
     
     def save_to_csv(self, metrics):
         """Save metrics to CSV file for historical tracking."""
@@ -556,25 +643,72 @@ class MetricsCollector:
             pypi.get('downloads_30d', 0)
         ]
         
-        # Check if file exists and has headers
-        file_exists = self.csv_file.exists()
+        headers = [
+            'date', 'total_repositories', 'total_stars', 'total_forks',
+            'total_watchers', 'organization_members',
+            'unique_contributors', 'total_open_issues', 'total_open_prs',
+            'active_repos_30d', 'scholar_authors', 'scholar_citations',
+            'scholar_publications', 'scholar_h_index', 'slack_members',
+            'pypi_downloads'
+        ]
         
-        with open(self.csv_file, 'a', newline='') as f:
-            writer = csv.writer(f)
+        # Check if file exists and read existing data
+        file_exists = self.csv_file.exists()
+        existing_dates = set()
+        
+        if file_exists:
+            try:
+                with open(self.csv_file, 'r', newline='') as f:
+                    reader = csv.DictReader(f)
+                    existing_dates = {row['date'] for row in reader}
+            except Exception as e:
+                print(f"Warning: Could not read existing CSV: {e}")
+        
+        # Write data (update if date exists, append if new)
+        if file_exists and date_str in existing_dates:
+            # Update existing entry for today
+            self._update_csv_entry(date_str, row_data, headers)
+            print(f"Updated metrics for {date_str}")
+        else:
+            # Append new entry
+            with open(self.csv_file, 'a', newline='') as f:
+                writer = csv.writer(f)
+                
+                # Write headers if file is new
+                if not file_exists:
+                    writer.writerow(headers)
+                
+                writer.writerow(row_data)
+            print(f"Added new metrics entry for {date_str}")
+    
+    def _update_csv_entry(self, target_date, new_row_data, headers):
+        """Update existing CSV entry for a specific date."""
+        try:
+            # Read all existing data
+            rows = []
+            with open(self.csv_file, 'r', newline='') as f:
+                reader = csv.reader(f)
+                rows = list(reader)
             
-            # Write headers if file is new
-            if not file_exists:
-                headers = [
-                    'date', 'total_repositories', 'total_stars', 'total_forks',
-                    'total_watchers', 'organization_members',
-                    'unique_contributors', 'total_open_issues', 'total_open_prs',
-                    'active_repos_30d', 'scholar_authors', 'scholar_citations',
-                    'scholar_publications', 'scholar_h_index', 'slack_members',
-                    'pypi_downloads'
-                ]
-                writer.writerow(headers)
+            # Update the specific row
+            for i, row in enumerate(rows):
+                if i == 0:  # Skip header
+                    continue
+                if len(row) > 0 and row[0] == target_date:
+                    rows[i] = new_row_data
+                    break
             
-            writer.writerow(row_data)
+            # Write back all data
+            with open(self.csv_file, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerows(rows)
+                
+        except Exception as e:
+            print(f"Error updating CSV entry: {e}")
+            # Fallback to append
+            with open(self.csv_file, 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(new_row_data)
     
     def save_to_json(self, metrics):
         """Save latest metrics to JSON file for dashboard."""

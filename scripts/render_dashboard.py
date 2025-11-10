@@ -80,23 +80,49 @@ class DashboardRenderer:
         return pd.DataFrame(data)
     
     def prepare_chart_data(self, df):
-        """Prepare data for JavaScript charts."""
-        # Get last 30 days of data
-        recent_df = df.tail(30) if len(df) > 30 else df
-        
+        """Prepare data for JavaScript charts with historical progression."""
+        if df.empty:
+            return self._get_default_chart_data()
+            
+        # Get data for different time periods
         chart_data = {
-            'dates': recent_df['date'].dt.strftime('%Y-%m-%d').tolist(),
-            'github_stars': (recent_df['github_stars'].tolist()
-                           if 'github_stars' in recent_df else []),
-            'github_forks': (recent_df['github_forks'].tolist()
-                           if 'github_forks' in recent_df else []),
-            'contributors': (recent_df['github_contributors'].tolist()
-                           if 'github_contributors' in recent_df else []),
-            'pypi_downloads': (recent_df['pypi_downloads'].tolist()
-                             if 'pypi_downloads' in recent_df else [])
+            # Last 30 days for detailed view
+            'dates_30d': df.tail(30)['date'].dt.strftime('%Y-%m-%d').tolist(),
+            'total_stars_30d': df.tail(30)['total_stars'].tolist(),
+            'total_repositories_30d': df.tail(30)['total_repositories'].tolist(),
+            'unique_contributors_30d': df.tail(30)['unique_contributors'].tolist(),
+            'scholar_citations_30d': df.tail(30)['scholar_citations'].tolist(),
+            
+            # Last 90 days for trend analysis
+            'dates_90d': df.tail(90)['date'].dt.strftime('%Y-%m-%d').tolist(),
+            'total_stars_90d': df.tail(90)['total_stars'].tolist(),
+            'scholar_citations_90d': df.tail(90)['scholar_citations'].tolist(),
+            
+            # All available data
+            'dates_all': df['date'].dt.strftime('%Y-%m-%d').tolist(),
+            'total_stars_all': df['total_stars'].tolist(),
+            'total_repositories_all': df['total_repositories'].tolist(),
+            'unique_contributors_all': df['unique_contributors'].tolist(),
+            'scholar_citations_all': df['scholar_citations'].tolist(),
+            'total_forks_all': df['total_forks'].tolist(),
+            
+            # Growth calculations
+            'data_points': len(df),
+            'date_range_days': (df['date'].max() - df['date'].min()).days if len(df) > 1 else 0
         }
         
         return chart_data
+    
+    def _get_default_chart_data(self):
+        """Default chart data when no historical data is available."""
+        return {
+            'dates_30d': [], 'total_stars_30d': [], 'total_repositories_30d': [],
+            'unique_contributors_30d': [], 'scholar_citations_30d': [],
+            'dates_90d': [], 'total_stars_90d': [], 'scholar_citations_90d': [],
+            'dates_all': [], 'total_stars_all': [], 'total_repositories_all': [],
+            'unique_contributors_all': [], 'scholar_citations_all': [], 'total_forks_all': [],
+            'data_points': 0, 'date_range_days': 0
+        }
     
     def calculate_trends(self, df):
         """Calculate trend indicators."""
