@@ -63,13 +63,16 @@ An automated dashboard for tracking open-source community health and growth metr
 3. Click **New repository secret** for each of the following:
 
 #### Required Secret:
-- **Name**: `GITHUB_TOKEN`
-  - **Value**: Personal access token with `read:org` and `repo` permissions
+- **Name**: `GH_PAT`
+  - **Value**: Personal access token with `repo`, `read:org`, and `workflow` permissions
   - **How to create**: 
     1. Go to https://github.com/settings/tokens
     2. Click "Generate new token (classic)"
-    3. Select scopes: `repo`, `read:org`
-    4. Copy the token and add as secret
+    3. Give it a name (e.g., "community-metrics")
+    4. Select scopes: ✅ `repo`, ✅ `read:org`, ✅ `read:user`, ✅ `workflow`
+    5. Click "Generate token" at the bottom
+    6. Copy the token (starts with `ghp_...`) - you won't see it again!
+    7. Add to GitHub Secrets as `GH_PAT`
 
 #### Recommended Secrets:
 - **Name**: `YOUTUBE_API_KEY`
