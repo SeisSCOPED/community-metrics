@@ -1,18 +1,109 @@
 {
-  "last_updated": "2025-11-11T16:13:07.008900Z",
+  "last_updated": "2025-11-11T17:28:05.441717Z",
   "github": {
     "organization_name": "SCOPED: Seismological Computation Platform for Empowering Discovery",
     "organization_description": "",
     "public_repos": 23,
     "followers": 53,
-    "organization_members": 0,
+    "organization_members": 15,
     "organization_created": "2020-10-09T18:01:47Z",
-    "members_details": [],
+    "members_details": [
+      {
+        "login": "bch0w",
+        "avatar_url": "https://avatars.githubusercontent.com/u/23055374?v=4",
+        "html_url": "https://github.com/bch0w",
+        "type": "User"
+      },
+      {
+        "login": "carltape",
+        "avatar_url": "https://avatars.githubusercontent.com/u/4455456?v=4",
+        "html_url": "https://github.com/carltape",
+        "type": "User"
+      },
+      {
+        "login": "ebozdag",
+        "avatar_url": "https://avatars.githubusercontent.com/u/9575135?v=4",
+        "html_url": "https://github.com/ebozdag",
+        "type": "User"
+      },
+      {
+        "login": "jaeestee",
+        "avatar_url": "https://avatars.githubusercontent.com/u/91847206?v=4",
+        "html_url": "https://github.com/jaeestee",
+        "type": "User"
+      },
+      {
+        "login": "jthet",
+        "avatar_url": "https://avatars.githubusercontent.com/u/111920176?v=4",
+        "html_url": "https://github.com/jthet",
+        "type": "User"
+      },
+      {
+        "login": "kaiwenwang233",
+        "avatar_url": "https://avatars.githubusercontent.com/u/51180520?v=4",
+        "html_url": "https://github.com/kaiwenwang233",
+        "type": "User"
+      },
+      {
+        "login": "kuanfufeng",
+        "avatar_url": "https://avatars.githubusercontent.com/u/59073232?v=4",
+        "html_url": "https://github.com/kuanfufeng",
+        "type": "User"
+      },
+      {
+        "login": "mdenolle",
+        "avatar_url": "https://avatars.githubusercontent.com/u/18743724?v=4",
+        "html_url": "https://github.com/mdenolle",
+        "type": "User"
+      },
+      {
+        "login": "mnagaso",
+        "avatar_url": "https://avatars.githubusercontent.com/u/4151388?v=4",
+        "html_url": "https://github.com/mnagaso",
+        "type": "User"
+      },
+      {
+        "login": "nathandf",
+        "avatar_url": "https://avatars.githubusercontent.com/u/59402772?v=4",
+        "html_url": "https://github.com/nathandf",
+        "type": "User"
+      },
+      {
+        "login": "niyiyu",
+        "avatar_url": "https://avatars.githubusercontent.com/u/36231703?v=4",
+        "html_url": "https://github.com/niyiyu",
+        "type": "User"
+      },
+      {
+        "login": "wangyinz",
+        "avatar_url": "https://avatars.githubusercontent.com/u/22849821?v=4",
+        "html_url": "https://github.com/wangyinz",
+        "type": "User"
+      },
+      {
+        "login": "Yangzhengtang",
+        "avatar_url": "https://avatars.githubusercontent.com/u/31916396?v=4",
+        "html_url": "https://github.com/Yangzhengtang",
+        "type": "User"
+      },
+      {
+        "login": "yetinam",
+        "avatar_url": "https://avatars.githubusercontent.com/u/14940857?v=4",
+        "html_url": "https://github.com/yetinam",
+        "type": "User"
+      },
+      {
+        "login": "yiw008",
+        "avatar_url": "https://avatars.githubusercontent.com/u/81718264?v=4",
+        "html_url": "https://github.com/yiw008",
+        "type": "User"
+      }
+    ],
     "total_repositories": 23,
     "total_stars": 33,
     "total_forks": 27,
     "total_watchers": 33,
-    "total_size_kb": 235205,
+    "total_size_kb": 235216,
     "primary_languages": {
       "HTML": 5,
       "Jupyter Notebook": 4,
@@ -91,14 +182,14 @@
         "releases_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/releases{/id}",
         "deployments_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/deployments",
         "created_at": "2025-11-10T20:53:44Z",
-        "updated_at": "2025-11-11T16:10:33Z",
-        "pushed_at": "2025-11-11T16:02:42Z",
+        "updated_at": "2025-11-11T16:29:44Z",
+        "pushed_at": "2025-11-11T16:29:41Z",
         "git_url": "git://github.com/SeisSCOPED/community-metrics.git",
         "ssh_url": "git@github.com:SeisSCOPED/community-metrics.git",
         "clone_url": "https://github.com/SeisSCOPED/community-metrics.git",
         "svn_url": "https://github.com/SeisSCOPED/community-metrics",
         "homepage": "http://seisscoped.org/community-metrics/",
-        "size": 118,
+        "size": 129,
         "stargazers_count": 0,
         "watchers_count": 0,
         "language": "HTML",
@@ -124,11 +215,28 @@
         "watchers": 0,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -239,11 +347,28 @@
         "watchers": 8,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -354,11 +479,28 @@
         "watchers": 3,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -469,11 +611,28 @@
         "watchers": 0,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -584,11 +743,28 @@
         "watchers": 1,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -699,11 +875,28 @@
         "watchers": 2,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -808,11 +1001,28 @@
         "watchers": 0,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -923,11 +1133,28 @@
         "watchers": 0,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -1038,11 +1265,28 @@
         "watchers": 1,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       },
@@ -1153,11 +1397,28 @@
         "watchers": 0,
         "default_branch": "main",
         "permissions": {
-          "admin": false,
-          "maintain": false,
-          "push": false,
-          "triage": false,
-          "pull": false
+          "admin": true,
+          "maintain": true,
+          "push": true,
+          "triage": true,
+          "pull": true
+        },
+        "security_and_analysis": {
+          "secret_scanning": {
+            "status": "disabled"
+          },
+          "secret_scanning_push_protection": {
+            "status": "disabled"
+          },
+          "dependabot_security_updates": {
+            "status": "disabled"
+          },
+          "secret_scanning_non_provider_patterns": {
+            "status": "disabled"
+          },
+          "secret_scanning_validity_checks": {
+            "status": "disabled"
+          }
         },
         "custom_properties": {}
       }
@@ -1165,24 +1426,24 @@
     "unique_contributors": 14,
     "contributor_list": [
       "jardmclan",
-      "niyiyu",
+      "Akashkharita",
+      "Strmiska",
+      "mdenolle",
+      "jarosenb",
       "wangyinz",
+      "actions-user",
       "yiw008",
       "nathandf",
-      "jaeestee",
-      "Strmiska",
-      "actions-user",
-      "mdenolle",
-      "Akashkharita",
+      "jthet",
       "yetinam",
-      "jarosenb",
+      "niyiyu",
       "jchuahtacc",
-      "jthet"
+      "jaeestee"
     ],
     "total_open_issues": 7,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-11T16:13:06.329895"
+    "last_activity_check": "2025-11-11T17:28:04.547375"
   },
   "discourse": {
     "enabled": false,
@@ -1199,7 +1460,7 @@
     "average_i10_index": 0,
     "institution": "",
     "authors_data": [],
-    "last_updated": "2025-11-11T16:13:06.332660"
+    "last_updated": "2025-11-11T17:28:04.548692"
   },
   "youtube": {
     "enabled": true,
@@ -1207,7 +1468,7 @@
     "subscribers": 130,
     "total_views": 3308,
     "video_count": 27,
-    "last_updated": "2025-11-11T16:13:06.738492",
+    "last_updated": "2025-11-11T17:28:05.043046",
     "method": "api"
   },
   "slack": {
