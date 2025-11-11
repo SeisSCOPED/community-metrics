@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-11T19:03:53.326970Z",
+  "last_updated": "2025-11-11T19:04:34.665956Z",
   "github": {
     "organization_name": "SCOPED: Seismological Computation Platform for Empowering Discovery",
     "organization_description": "",
@@ -182,8 +182,8 @@
         "releases_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/releases{/id}",
         "deployments_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/deployments",
         "created_at": "2025-11-10T20:53:44Z",
-        "updated_at": "2025-11-11T19:03:19Z",
-        "pushed_at": "2025-11-11T19:03:16Z",
+        "updated_at": "2025-11-11T19:03:57Z",
+        "pushed_at": "2025-11-11T19:03:55Z",
         "git_url": "git://github.com/SeisSCOPED/community-metrics.git",
         "ssh_url": "git@github.com:SeisSCOPED/community-metrics.git",
         "clone_url": "https://github.com/SeisSCOPED/community-metrics.git",
@@ -1425,25 +1425,25 @@
     ],
     "unique_contributors": 14,
     "contributor_list": [
+      "yiw008",
       "Strmiska",
+      "jardmclan",
+      "Akashkharita",
+      "jchuahtacc",
+      "niyiyu",
+      "wangyinz",
+      "yetinam",
       "mdenolle",
       "nathandf",
       "jarosenb",
-      "wangyinz",
       "actions-user",
-      "yiw008",
-      "jthet",
-      "niyiyu",
       "jaeestee",
-      "Akashkharita",
-      "jchuahtacc",
-      "jardmclan",
-      "yetinam"
+      "jthet"
     ],
     "total_open_issues": 7,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-11T19:03:52.592862"
+    "last_activity_check": "2025-11-11T19:04:33.737875"
   },
   "discourse": {
     "enabled": false,
@@ -1460,7 +1460,7 @@
     "average_i10_index": 0,
     "institution": "",
     "authors_data": [],
-    "last_updated": "2025-11-11T19:03:52.594881"
+    "last_updated": "2025-11-11T19:04:33.740544"
   },
   "youtube": {
     "enabled": true,
@@ -1468,7 +1468,7 @@
     "subscribers": 130,
     "total_views": 3309,
     "video_count": 27,
-    "last_updated": "2025-11-11T19:03:52.942295",
+    "last_updated": "2025-11-11T19:04:34.238531",
     "method": "api"
   },
   "slack": {
