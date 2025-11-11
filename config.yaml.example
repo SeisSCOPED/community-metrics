@@ -1,0 +1,47 @@
+# SCOPED Community Metrics Configuration Template
+# 
+# ⚠️ SECURITY NOTICE: 
+# - Copy this file to config.yaml: cp config.yaml.example config.yaml
+# - Edit config.yaml with your settings (organization names, URLs, etc.)
+# - DO NOT add API keys or tokens to config.yaml!
+# - Add API keys as GitHub Secrets instead (Settings → Secrets and variables → Actions)
+#
+# Required GitHub Secrets:
+#   - GITHUB_TOKEN (required for organization metrics)
+#   - YOUTUBE_API_KEY (recommended for YouTube metrics)
+#   - SLACK_TOKEN (optional, if using Slack)
+#
+# For local testing, use environment variables:
+#   export GITHUB_TOKEN="your_token"
+#   export YOUTUBE_API_KEY="your_key"
+
+# GitHub Configuration
+github:
+  organization: "YourOrgName"  # Replace with your GitHub organization
+  repository: "YourOrgName/your-repo"  # Replace with your repository
+
+# YouTube Configuration
+youtube:
+  channel_url: "https://www.youtube.com/@yourchannel"  # Replace with your channel
+  # Get API key from: https://console.cloud.google.com/apis/credentials
+  # Enable "YouTube Data API v3" and create an API key
+  # Add the key as a GitHub Secret named YOUTUBE_API_KEY
+
+# Google Scholar Configuration
+google_scholar:
+  author_ids:
+    - "AUTHOR_ID_1"  # Get from Google Scholar profile URL
+    - "AUTHOR_ID_2"  # Example: https://scholar.google.com/citations?user=AUTHOR_ID
+  institution: "Your Institution Name"  # Optional
+
+# PyPI Configuration (optional)
+pypi:
+  package_name: "your-package-name"  # Replace with your PyPI package name
+
+# Slack Configuration (optional)
+# Get token from: https://api.slack.com/apps
+# Add the token as a GitHub Secret named SLACK_TOKEN
+
+# Discourse Configuration (optional - currently disabled)
+discourse:
+  enabled: false

@@ -1,4 +1,4 @@
-# Community Metrics Dashboard 📊
+# SCOPED Community Metrics Dashboard 📊
 
 An automated dashboard for tracking open-source community health and growth metrics across multiple platforms including GitHub, Discourse forums, Slack workspaces, and PyPI downloads.
 
@@ -23,7 +23,8 @@ An automated dashboard for tracking open-source community health and growth metr
 ### Academic Impact & Community Engagement
 - 📚 Google Scholar author profiles and citation metrics
 - 📄 Publication counts, citations, and h-index tracking
-- 💼 Slack workspace members and activity (optional)
+- � YouTube channel metrics (subscribers, views, videos)
+- �💼 Slack workspace members and activity (optional)
 - 📦 PyPI package download statistics (optional)
 - 📈 Growth trends and analytics
 
@@ -32,39 +33,74 @@ An automated dashboard for tracking open-source community health and growth metr
 ### 1. Repository Setup
 
 1. **Fork or clone this repository**
-2. **Copy configuration template**:
-   ```bash
-   cp config.yaml.example config.yaml
-   ```
 
-3. **Configure your data sources** in `config.yaml`:
+2. **Edit `config.yaml`** to configure your data sources (without any API keys/tokens):
    ```yaml
    github:
-     organization: "SeisSCOPED"  # Your GitHub organization
-     repository: "SeisSCOPED/community-metrics"
-     token: "ghp_your_token_here"  # Required for organization metrics
-     collect_org_metrics: true
+     organization: "SeisSCOPED"  # Your GitHub organization name
+     repository: "SeisSCOPED/community-metrics"  # Main repository
+   
+   youtube:
+     channel_url: "https://www.youtube.com/@scoped6259"  # Your YouTube channel URL
    
    google_scholar:
      author_ids:  # Google Scholar author IDs to track
-       - "GR8BOxsAAAAJ"  # Example author ID from Scholar profile URL
-     institution: "University of Washington"  # Optional: filter by institution
-   
-   slack:
-     token: "xoxb-your-slack-token"  # Optional
+       - "GR8BOxsAAAAJ"  # Get from Scholar profile URL
+     institution: "University of Washington"  # Optional
    
    pypi:
-     package_name: "your-package-name"  # Optional
+     package_name: "your-package-name"  # Optional: your PyPI package
    ```
+   
+   **⚠️ Important**: Do NOT add API keys or tokens to this file! Use GitHub Secrets instead (see next step).
 
-### 2. GitHub Secrets Configuration
+### 2. Add API Keys as GitHub Secrets (Secure Method)
 
-Add the following secrets to your GitHub repository (Settings → Secrets and variables → Actions):
+**Required for automated collection**. Add secrets to your repository:
 
-- `GITHUB_TOKEN`: Personal access token with `read:org` and `repo` permissions (required for organization metrics)
-- `SLACK_TOKEN`: Slack bot token (optional, if using Slack)
+1. Go to your GitHub repository **Settings**
+2. Navigate to **Secrets and variables** → **Actions**
+3. Click **New repository secret** for each of the following:
 
-**Note**: Google Scholar metrics are collected without API keys using web scraping. No additional authentication required.
+#### Required Secret:
+- **Name**: `GITHUB_TOKEN`
+  - **Value**: Personal access token with `read:org` and `repo` permissions
+  - **How to create**: 
+    1. Go to https://github.com/settings/tokens
+    2. Click "Generate new token (classic)"
+    3. Select scopes: `repo`, `read:org`
+    4. Copy the token and add as secret
+
+#### Recommended Secrets:
+- **Name**: `YOUTUBE_API_KEY`
+  - **Value**: YouTube Data API v3 key
+  - **Why**: Web scraping is unreliable; API provides accurate metrics
+  - **How to create**: See section below
+
+#### Optional Secrets:
+- **Name**: `SLACK_TOKEN`
+  - **Value**: Slack bot token (if tracking Slack metrics)
+
+**Note**: Google Scholar requires no API key (uses web scraping).
+
+#### How to Get a YouTube API Key
+
+YouTube web scraping is unreliable. For accurate metrics, use the YouTube Data API (free):
+
+**Step-by-step**:
+1. Go to https://console.cloud.google.com/
+2. Click **"Select a project"** → **"New Project"**
+3. Enter project name (e.g., "youtube-metrics") → Click **"Create"**
+4. Use the search bar to find **"YouTube Data API v3"** → Click it
+5. Click the blue **"ENABLE"** button
+6. Click **"Credentials"** in the left sidebar
+7. Click **"+ CREATE CREDENTIALS"** → Select **"API key"**
+8. **Copy the API key** that appears
+9. Add to GitHub Secrets as `YOUTUBE_API_KEY` (see step 2 above)
+
+**Cost**: Free forever (10,000 quota units/day, channel stats use ~5 units)
+
+**Note**: No credit card or VM required - just enable the API and create a key!
 
 ### 3. Enable GitHub Pages
 
@@ -75,9 +111,15 @@ Add the following secrets to your GitHub repository (Settings → Secrets and va
 
 ### 4. Manual Testing (Optional)
 
+**For local testing only** - use environment variables (never commit keys!):
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
+
+# Set API keys as environment variables (temporary, for this terminal session)
+export GITHUB_TOKEN="ghp_your_token_here"
+export YOUTUBE_API_KEY="AIza_your_key_here"
 
 # Test metrics collection
 python scripts/collect_metrics.py
@@ -88,6 +130,8 @@ python scripts/render_dashboard.py
 # View the generated dashboard
 open dashboard/index.html
 ```
+
+**Security reminder**: Never add API keys to `config.yaml` or commit them to git!
 
 ## 🔧 Configuration
 
@@ -123,6 +167,20 @@ google_scholar:
   # - Recent publication counts
   # - Citation growth trends
   # - Aggregate metrics across all tracked authors
+
+# YouTube Configuration
+youtube:
+  channel_url: "https://www.youtube.com/@yourchannel"  # Your YouTube channel URL
+  api_key: "AIzaSy..."  # Optional: YouTube Data API key (recommended)
+  
+  # Metrics collected:
+  # - Subscriber count
+  # - Total video views
+  # - Number of videos
+  # - Channel growth trends
+  # 
+  # Note: Web scraping fallback available but less reliable
+  # Get API key: https://console.cloud.google.com/apis/credentials
 
 # Optional integrations
 slack:

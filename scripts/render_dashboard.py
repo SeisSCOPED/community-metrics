@@ -434,21 +434,21 @@ class DashboardRenderer:
         if youtube_metrics:
             # Update YouTube subscribers
             subscribers = youtube_metrics.get('subscribers', 0)
-            pattern = r'<div class="metric-value" id="youtubeSubscribers">0</div>'
+            pattern = r'<div class="metric-value" id="youtubeSubscribers">\d+</div>'
             replacement = (f'<div class="metric-value" '
                           f'id="youtubeSubscribers">{subscribers}</div>')
             html_content = re.sub(pattern, replacement, html_content)
             
             # Update YouTube views
             views = youtube_metrics.get('total_views', 0)
-            pattern = r'<div class="metric-value" id="youtubeViews">0</div>'
+            pattern = r'<div class="metric-value" id="youtubeViews">\d+</div>'
             replacement = (f'<div class="metric-value" '
                           f'id="youtubeViews">{views:,}</div>')
             html_content = re.sub(pattern, replacement, html_content)
             
             # Update YouTube videos count
             videos = youtube_metrics.get('video_count', 0)
-            pattern = r'<div class="metric-value" id="youtubeVideos">0</div>'
+            pattern = r'<div class="metric-value" id="youtubeVideos">\d+</div>'
             replacement = (f'<div class="metric-value" '
                           f'id="youtubeVideos">{videos}</div>')
             html_content = re.sub(pattern, replacement, html_content)
@@ -460,8 +460,7 @@ class DashboardRenderer:
                 'video_count': videos
             }
             youtube_json = json.dumps(youtube_data)
-            js_pattern = (r'const youtubeData = \{ subscribers: 0, '
-                         r'total_views: 0, video_count: 0 \}; // Placeholder')
+            js_pattern = (r'const youtubeData = \{[^}]+\}; // (?:Placeholder|Live data)')
             js_replacement = f'const youtubeData = {youtube_json}; // Live data'
             html_content = re.sub(js_pattern, js_replacement, html_content)
         

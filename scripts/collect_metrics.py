@@ -534,25 +534,38 @@ class MetricsCollector:
             return {'total_downloads': 0, 'downloads_30d': 0}
     
     def get_youtube_metrics(self):
-        """Collect YouTube channel metrics via web scraping."""
+        """Collect YouTube channel metrics via API or web scraping."""
         youtube_config = self.config.get('youtube', {})
-        channel_url = youtube_config.get('channel_url', '')
+        # Use the SCOPED YouTube channel URL as default
+        channel_url = youtube_config.get('channel_url', 'https://www.youtube.com/@scoped6259')
+        api_key = os.getenv('YOUTUBE_API_KEY') or youtube_config.get('api_key')
         
         if not channel_url:
             print("Info: No YouTube channel URL configured.")
             return self._get_default_youtube_metrics()
         
-        print("Collecting YouTube channel metrics...")
+        # Try API method first if available
+        if api_key:
+            print("Attempting to collect YouTube metrics via API...")
+            metrics = self._get_youtube_metrics_api(channel_url, api_key)
+            if metrics.get('enabled'):
+                return metrics
+            print("API method failed, falling back to web scraping...")
+        
+        # Fall back to web scraping
+        print("Collecting YouTube channel metrics via web scraping...")
         
         try:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
             }
             
             # Respectful delay
             time.sleep(2)
             
-            response = requests.get(channel_url, headers=headers)
+            response = requests.get(channel_url, headers=headers, timeout=15)
             if response.status_code != 200:
                 print(f"Warning: Could not access YouTube channel: {response.status_code}")
                 return self._get_default_youtube_metrics()
@@ -578,28 +591,100 @@ class MetricsCollector:
             print(f"Error collecting YouTube metrics: {e}")
             return self._get_default_youtube_metrics()
     
+    def _get_youtube_metrics_api(self, channel_url, api_key):
+        """Collect YouTube metrics using YouTube Data API v3."""
+        try:
+            # Extract channel ID or handle from URL
+            channel_handle = None
+            if '@' in channel_url:
+                channel_handle = channel_url.split('@')[-1].strip('/')
+            
+            # Use YouTube Data API
+            base_url = "https://www.googleapis.com/youtube/v3"
+            
+            # First, get channel ID from handle
+            if channel_handle:
+                search_url = f"{base_url}/search"
+                params = {
+                    'part': 'snippet',
+                    'q': channel_handle,
+                    'type': 'channel',
+                    'key': api_key,
+                    'maxResults': 1
+                }
+                response = requests.get(search_url, params=params, timeout=10)
+                if response.status_code != 200:
+                    print(f"YouTube API search failed: {response.status_code}")
+                    return self._get_default_youtube_metrics()
+                
+                data = response.json()
+                if 'items' not in data or len(data['items']) == 0:
+                    print("Could not find channel via API")
+                    return self._get_default_youtube_metrics()
+                
+                channel_id = data['items'][0]['snippet']['channelId']
+                
+                # Get channel statistics
+                channels_url = f"{base_url}/channels"
+                params = {
+                    'part': 'statistics',
+                    'id': channel_id,
+                    'key': api_key
+                }
+                response = requests.get(channels_url, params=params, timeout=10)
+                if response.status_code != 200:
+                    print(f"YouTube API channels failed: {response.status_code}")
+                    return self._get_default_youtube_metrics()
+                
+                data = response.json()
+                if 'items' not in data or len(data['items']) == 0:
+                    return self._get_default_youtube_metrics()
+                
+                stats = data['items'][0]['statistics']
+                
+                return {
+                    'enabled': True,
+                    'channel_url': channel_url,
+                    'subscribers': int(stats.get('subscriberCount', 0)),
+                    'total_views': int(stats.get('viewCount', 0)),
+                    'video_count': int(stats.get('videoCount', 0)),
+                    'last_updated': datetime.utcnow().isoformat(),
+                    'method': 'api'
+                }
+            
+            return self._get_default_youtube_metrics()
+            
+        except Exception as e:
+            print(f"Error using YouTube API: {e}")
+            return self._get_default_youtube_metrics()
+    
     def _extract_youtube_subscribers(self, soup):
         """Extract subscriber count from YouTube page."""
         try:
-            # Method 1: Look for subscriber count in script tags
+            # Method 1: Look for subscriber count in script tags containing ytInitialData
             scripts = soup.find_all('script')
             for script in scripts:
-                if script.string:
+                if script.string and 'ytInitialData' in script.string:
                     content = script.string
-                    # Look for various patterns
+                    # Look for various patterns in ytInitialData
                     patterns = [
-                        r'"subscriberCountText".*?"simpleText":"([^"]+)"',
-                        r'"subscriberCount":{"simpleText":"([^"]+)"',
-                        r'{"text":"([^"]*subscribers[^"]*)"',
-                        r'"([0-9.]+[KM]?\s*subscribers)"'
+                        r'"subscriberCountText".*?"simpleText"\s*:\s*"([^"]+)"',
+                        r'"subscriberCount"\s*:\s*{\s*"simpleText"\s*:\s*"([^"]+)"',
+                        r'subscriberCountText.*?simpleText["\s:]+([0-9.]+[KM]?\s*subscribers?)',
+                        r'"subscriberCountText".*?"runs".*?"text"\s*:\s*"([^"]+)"'
                     ]
                     
                     for pattern in patterns:
-                        matches = re.findall(pattern, content, re.IGNORECASE)
+                        matches = re.findall(pattern, content, re.IGNORECASE | re.DOTALL)
                         if matches:
                             for match in matches:
-                                numbers = re.findall(r'[\d.]+[KM]?', match)
+                                # Extract number from the match
+                                numbers = re.findall(r'([\d.]+[KM]?)\s*subscriber', match, re.IGNORECASE)
                                 if numbers:
+                                    return self._convert_youtube_number(numbers[0])
+                                # Try direct number extraction
+                                numbers = re.findall(r'[\d.]+[KM]?', match)
+                                if numbers and any(char.isdigit() for char in numbers[0]):
                                     return self._convert_youtube_number(numbers[0])
             
             # Method 2: Look in meta description
@@ -611,11 +696,16 @@ class MetricsCollector:
                     if numbers:
                         return self._convert_youtube_number(numbers[0])
             
-            # Method 3: For demonstration, return a sample value for SCOPED
-            # This helps show the dashboard functionality until real scraping works
-            if 'scoped6259' in self.config.get('youtube', {}).get('channel_url', '').lower():
-                return 156  # Sample subscriber count for demonstration
-                        
+            # Method 3: Look for og:description meta tag
+            og_desc = soup.find('meta', {'property': 'og:description'})
+            if og_desc:
+                content = og_desc.get('content', '')
+                if 'subscriber' in content.lower():
+                    numbers = re.findall(r'([\d.]+[KM]?)\s*subscriber', content, re.IGNORECASE)
+                    if numbers:
+                        return self._convert_youtube_number(numbers[0])
+            
+            print(f"Debug: Could not extract subscriber count from page")
             return 0
         except Exception as e:
             print(f"Debug: Error extracting subscribers: {e}")
@@ -626,20 +716,32 @@ class MetricsCollector:
         try:
             scripts = soup.find_all('script')
             for script in scripts:
-                if script.string and 'viewCountText' in script.string:
-                    matches = re.findall(r'"viewCountText".*?"simpleText":"([^"]+)"', script.string)
-                    if matches:
-                        view_text = matches[0]
-                        numbers = re.findall(r'[\d,]+', view_text.replace(',', ''))
-                        if numbers:
-                            return int(numbers[0])
+                if script.string and 'ytInitialData' in script.string:
+                    content = script.string
+                    # Look for view count patterns
+                    patterns = [
+                        r'"viewCountText".*?"simpleText"\s*:\s*"([^"]+)"',
+                        r'"viewCount"\s*:\s*{\s*"simpleText"\s*:\s*"([^"]+)"',
+                        r'viewCountText.*?simpleText["\s:]+([0-9,]+\s*views?)'
+                    ]
+                    
+                    for pattern in patterns:
+                        matches = re.findall(pattern, content, re.IGNORECASE | re.DOTALL)
+                        if matches:
+                            view_text = matches[0]
+                            # Extract numbers and remove commas
+                            numbers = re.findall(r'[\d,]+', view_text)
+                            if numbers:
+                                clean_number = numbers[0].replace(',', '')
+                                try:
+                                    return int(clean_number)
+                                except ValueError:
+                                    continue
             
-            # Sample data for demonstration
-            if 'scoped6259' in self.config.get('youtube', {}).get('channel_url', '').lower():
-                return 12850  # Sample view count
-                            
+            print(f"Debug: Could not extract view count from page")
             return 0
-        except Exception:
+        except Exception as e:
+            print(f"Debug: Error extracting views: {e}")
             return 0
     
     def _extract_youtube_video_count(self, soup):
@@ -647,20 +749,31 @@ class MetricsCollector:
         try:
             scripts = soup.find_all('script')
             for script in scripts:
-                if script.string and 'videoCountText' in script.string:
-                    matches = re.findall(r'"videoCountText".*?"runs":\[{"text":"([^"]+)"', script.string)
-                    if matches:
-                        count_text = matches[0]
-                        numbers = re.findall(r'\d+', count_text)
-                        if numbers:
-                            return int(numbers[0])
+                if script.string and 'ytInitialData' in script.string:
+                    content = script.string
+                    # Look for video count patterns
+                    patterns = [
+                        r'"videoCountText".*?"runs".*?"text"\s*:\s*"([^"]+)"',
+                        r'"videoCount"\s*:\s*{\s*"runs".*?"text"\s*:\s*"([^"]+)"',
+                        r'videoCountText.*?text["\s:]+(\d+)\s*videos?',
+                        r'stats.*?(\d+)\s*videos?'
+                    ]
+                    
+                    for pattern in patterns:
+                        matches = re.findall(pattern, content, re.IGNORECASE | re.DOTALL)
+                        if matches:
+                            count_text = matches[0]
+                            numbers = re.findall(r'\d+', count_text)
+                            if numbers:
+                                try:
+                                    return int(numbers[0])
+                                except ValueError:
+                                    continue
             
-            # Sample data for demonstration
-            if 'scoped6259' in self.config.get('youtube', {}).get('channel_url', '').lower():
-                return 24  # Sample video count
-                            
+            print(f"Debug: Could not extract video count from page")
             return 0
-        except Exception:
+        except Exception as e:
+            print(f"Debug: Error extracting video count: {e}")
             return 0
     
     def _convert_youtube_number(self, number_str):
