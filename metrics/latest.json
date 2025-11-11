@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-11T19:43:56.808559Z",
+  "last_updated": "2025-11-11T19:44:31.297220Z",
   "github": {
     "organization_name": "SCOPED: Seismological Computation Platform for Empowering Discovery",
     "organization_description": "",
@@ -103,7 +103,7 @@
     "total_stars": 33,
     "total_forks": 27,
     "total_watchers": 33,
-    "total_size_kb": 235247,
+    "total_size_kb": 235283,
     "primary_languages": {
       "HTML": 5,
       "Jupyter Notebook": 4,
@@ -182,14 +182,14 @@
         "releases_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/releases{/id}",
         "deployments_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/deployments",
         "created_at": "2025-11-10T20:53:44Z",
-        "updated_at": "2025-11-11T19:43:30Z",
-        "pushed_at": "2025-11-11T19:43:27Z",
+        "updated_at": "2025-11-11T19:44:01Z",
+        "pushed_at": "2025-11-11T19:43:58Z",
         "git_url": "git://github.com/SeisSCOPED/community-metrics.git",
         "ssh_url": "git@github.com:SeisSCOPED/community-metrics.git",
         "clone_url": "https://github.com/SeisSCOPED/community-metrics.git",
         "svn_url": "https://github.com/SeisSCOPED/community-metrics",
         "homepage": "http://seisscoped.org/community-metrics/",
-        "size": 160,
+        "size": 196,
         "stargazers_count": 0,
         "watchers_count": 0,
         "language": "HTML",
@@ -1426,24 +1426,24 @@
     "unique_contributors": 14,
     "contributor_list": [
       "actions-user",
+      "niyiyu",
+      "jthet",
       "wangyinz",
       "jchuahtacc",
       "nathandf",
-      "niyiyu",
-      "yetinam",
       "mdenolle",
       "jaeestee",
-      "jarosenb",
       "jardmclan",
-      "Akashkharita",
-      "jthet",
+      "jarosenb",
+      "yetinam",
+      "yiw008",
       "Strmiska",
-      "yiw008"
+      "Akashkharita"
     ],
     "total_open_issues": 7,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-11T19:43:56.154224"
+    "last_activity_check": "2025-11-11T19:44:30.423303"
   },
   "discourse": {
     "enabled": false,
@@ -1460,7 +1460,7 @@
     "average_i10_index": 0,
     "institution": "",
     "authors_data": [],
-    "last_updated": "2025-11-11T19:43:56.156933"
+    "last_updated": "2025-11-11T19:44:30.426082"
   },
   "youtube": {
     "enabled": true,
@@ -1468,7 +1468,7 @@
     "subscribers": 130,
     "total_views": 3309,
     "video_count": 27,
-    "last_updated": "2025-11-11T19:43:56.615529",
+    "last_updated": "2025-11-11T19:44:30.777619",
     "method": "api"
   },
   "slack": {
