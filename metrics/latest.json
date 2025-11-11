@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-11T19:23:28.372439Z",
+  "last_updated": "2025-11-11T19:24:01.716638Z",
   "github": {
     "organization_name": "SCOPED: Seismological Computation Platform for Empowering Discovery",
     "organization_description": "",
@@ -182,8 +182,8 @@
         "releases_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/releases{/id}",
         "deployments_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/deployments",
         "created_at": "2025-11-10T20:53:44Z",
-        "updated_at": "2025-11-11T19:22:55Z",
-        "pushed_at": "2025-11-11T19:22:52Z",
+        "updated_at": "2025-11-11T19:23:32Z",
+        "pushed_at": "2025-11-11T19:23:30Z",
         "git_url": "git://github.com/SeisSCOPED/community-metrics.git",
         "ssh_url": "git@github.com:SeisSCOPED/community-metrics.git",
         "clone_url": "https://github.com/SeisSCOPED/community-metrics.git",
@@ -1425,25 +1425,25 @@
     ],
     "unique_contributors": 14,
     "contributor_list": [
-      "jardmclan",
-      "wangyinz",
       "jthet",
-      "actions-user",
-      "Akashkharita",
-      "mdenolle",
-      "nathandf",
-      "jchuahtacc",
-      "Strmiska",
-      "jaeestee",
-      "yetinam",
       "yiw008",
+      "yetinam",
+      "mdenolle",
+      "Akashkharita",
+      "nathandf",
+      "jaeestee",
+      "wangyinz",
+      "Strmiska",
+      "niyiyu",
       "jarosenb",
-      "niyiyu"
+      "jardmclan",
+      "jchuahtacc",
+      "actions-user"
     ],
     "total_open_issues": 7,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-11T19:23:27.450909"
+    "last_activity_check": "2025-11-11T19:24:01.073943"
   },
   "discourse": {
     "enabled": false,
@@ -1460,7 +1460,7 @@
     "average_i10_index": 0,
     "institution": "",
     "authors_data": [],
-    "last_updated": "2025-11-11T19:23:27.453265"
+    "last_updated": "2025-11-11T19:24:01.076285"
   },
   "youtube": {
     "enabled": true,
@@ -1468,7 +1468,7 @@
     "subscribers": 130,
     "total_views": 3309,
     "video_count": 27,
-    "last_updated": "2025-11-11T19:23:27.872762",
+    "last_updated": "2025-11-11T19:24:01.397578",
     "method": "api"
   },
   "slack": {
