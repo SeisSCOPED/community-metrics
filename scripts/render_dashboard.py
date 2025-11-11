@@ -411,23 +411,29 @@ class DashboardRenderer:
         html_content = re.sub(pattern, replacement, html_content)
         
         # Update metric values in the HTML
-        # Update stars
+        # Update stars in Overview page
         stars = metrics.get('github', {}).get('total_stars', 0)
-        html_content = re.sub(r'<div class="metric-value"></div>', 
-                             f'<div class="metric-value">{stars}</div>', 
-                             html_content, count=1)
+        html_content = re.sub(
+            r'(<div class="metric-value">)\d+(</div>\s*<div class="metric-label">⭐ GitHub Stars</div>)',
+            f'\\g<1>{stars}\\g<2>',
+            html_content
+        )
         
-        # Update contributors  
+        # Update contributors in Overview page
         contributors = metrics.get('github', {}).get('unique_contributors', 0)
-        html_content = re.sub(r'<div class="metric-value"></div>', 
-                             f'<div class="metric-value">{contributors}</div>', 
-                             html_content, count=1)
+        html_content = re.sub(
+            r'(<div class="metric-value">)\d+(</div>\s*<div class="metric-label">👥 Contributors</div>)',
+            f'\\g<1>{contributors}\\g<2>',
+            html_content
+        )
         
-        # Update forks
+        # Update forks in Overview page
         forks = metrics.get('github', {}).get('total_forks', 0)
-        html_content = re.sub(r'<div class="metric-value"></div>', 
-                             f'<div class="metric-value">{forks}</div>', 
-                             html_content, count=1)
+        html_content = re.sub(
+            r'(<div class="metric-value">)\d+(</div>\s*<div class="metric-label">🍴 Forks</div>)',
+            f'\\g<1>{forks}\\g<2>',
+            html_content
+        )
         
         # Update YouTube metrics if available
         youtube_metrics = metrics.get('youtube', {})
