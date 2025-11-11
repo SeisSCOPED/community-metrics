@@ -63,6 +63,8 @@ jobs:
         # Copy metrics data for dashboard
         mkdir -p _site/metrics
         cp metrics/latest.json _site/metrics/ 2>/dev/null || echo "No metrics data found"
+        # Force GitHub Pages to bypass Jekyll and prevent caching issues
+        touch _site/.nojekyll
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
@@ -71,3 +73,6 @@ jobs:
         publish_dir: ./_site
         publish_branch: gh-pages
         force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'Deploy dashboard - ${{ github.sha }}'
