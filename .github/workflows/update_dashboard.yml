@@ -80,7 +80,7 @@ jobs:
         github_token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         publish_dir: ./_site
         publish_branch: gh-pages
-        force_orphan: true
+        force_orphan: false
         user_name: 'github-actions[bot]'
         user_email: 'github-actions[bot]@users.noreply.github.com'
         commit_message: 'Deploy dashboard - ${{ github.sha }}'
