@@ -10,9 +10,9 @@ on:
       - main
     paths:
       - 'dashboard/**'
-      - 'metrics/**'
       - 'scripts/**'
       - '.github/workflows/update_dashboard.yml'
+    # Don't trigger on metrics/** to avoid infinite loop
 
 jobs:
   update-metrics:
