@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-13T06:35:56.254130Z",
+  "last_updated": "2025-11-14T06:35:01.267340Z",
   "github": {
     "organization_name": "SCOPED: Seismological Computation Platform for Empowering Discovery",
     "organization_description": "",
@@ -103,7 +103,7 @@
     "total_stars": 33,
     "total_forks": 27,
     "total_watchers": 33,
-    "total_size_kb": 235303,
+    "total_size_kb": 235317,
     "primary_languages": {
       "HTML": 5,
       "Jupyter Notebook": 4,
@@ -182,14 +182,14 @@
         "releases_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/releases{/id}",
         "deployments_url": "https://api.github.com/repos/SeisSCOPED/community-metrics/deployments",
         "created_at": "2025-11-10T20:53:44Z",
-        "updated_at": "2025-11-13T06:35:28Z",
-        "pushed_at": "2025-11-13T06:35:26Z",
+        "updated_at": "2025-11-13T06:36:00Z",
+        "pushed_at": "2025-11-13T06:35:57Z",
         "git_url": "git://github.com/SeisSCOPED/community-metrics.git",
         "ssh_url": "git@github.com:SeisSCOPED/community-metrics.git",
         "clone_url": "https://github.com/SeisSCOPED/community-metrics.git",
         "svn_url": "https://github.com/SeisSCOPED/community-metrics",
         "homepage": "http://seisscoped.org/community-metrics/",
-        "size": 216,
+        "size": 230,
         "stargazers_count": 0,
         "watchers_count": 0,
         "language": "HTML",
@@ -1425,25 +1425,25 @@
     ],
     "unique_contributors": 14,
     "contributor_list": [
-      "niyiyu",
-      "nathandf",
-      "jarosenb",
       "jthet",
-      "jardmclan",
-      "actions-user",
-      "yetinam",
-      "jchuahtacc",
-      "yiw008",
-      "mdenolle",
+      "jarosenb",
+      "nathandf",
       "Akashkharita",
-      "jaeestee",
+      "jardmclan",
+      "mdenolle",
+      "yiw008",
+      "yetinam",
+      "wangyinz",
+      "jchuahtacc",
       "Strmiska",
-      "wangyinz"
+      "actions-user",
+      "niyiyu",
+      "jaeestee"
     ],
     "total_open_issues": 7,
     "total_open_prs": 0,
     "recent_issues_30d": 0,
-    "last_activity_check": "2025-11-13T06:35:55.578844"
+    "last_activity_check": "2025-11-14T06:35:00.370989"
   },
   "discourse": {
     "enabled": false,
@@ -1460,15 +1460,15 @@
     "average_i10_index": 0,
     "institution": "",
     "authors_data": [],
-    "last_updated": "2025-11-13T06:35:55.581479"
+    "last_updated": "2025-11-14T06:35:00.373270"
   },
   "youtube": {
     "enabled": true,
     "channel_url": "https://www.youtube.com/@scoped6259",
     "subscribers": 130,
-    "total_views": 3313,
+    "total_views": 3328,
     "video_count": 27,
-    "last_updated": "2025-11-13T06:35:55.981358",
+    "last_updated": "2025-11-14T06:35:00.836486",
     "method": "api"
   },
   "slack": {
@@ -1476,8 +1476,8 @@
     "active_members_30d": 0
   },
   "pypi": {
-    "total_downloads": 631,
-    "downloads_30d": 631
+    "total_downloads": 622,
+    "downloads_30d": 622
   },
   "growth_metrics": {
     "stars_growth_7d": 0,
